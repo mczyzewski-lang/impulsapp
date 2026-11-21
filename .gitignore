@@ -5,3 +5,5 @@ dist
 # Capacitor native projects are generated locally (npx cap add ios / android)
 ios
 android
+# Ustawienia serwera (klucze API) i dziennik wydatków
+data

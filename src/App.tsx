@@ -32,6 +32,7 @@ const EmbedSignupPage = lazy(() => import("./landing/EmbedSignupPage"));
 const CreatorRecorder = lazy(() => import("./creator/studio/CreatorRecorder"));
 const CreatorVideoStudio = lazy(() => import("./creator/studio/CreatorVideoStudio"));
 const CreatorsLanding = lazy(() => import("./landing/CreatorsLanding"));
+const AdminPage = lazy(() => import("./admin/AdminPage"));
 const CreatorLinks = lazy(() => import("./creator/CreatorLinks"));
 const CreatorSettings = lazy(() => import("./creator/CreatorSettings"));
 
@@ -55,6 +56,7 @@ function ScrollToTop() {
  *   /k/:slug     zaproszenie do kanału twórcy (wejście odbiorcy z linku)
  *   /app/*       aplikacja odbiorcy
  *   /studio/*    panel twórcy
+ *   /admin       panel administratora: klucze API i wydatki (wymaga serwera)
  */
 export default function App() {
   return (
@@ -66,6 +68,7 @@ export default function App() {
         <Route path="/" element={isNative ? <Navigate to="/app" replace /> : <LandingPage />} />
 
         <Route path="/tworcy" element={<CreatorsLanding />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="/s/:slug" element={<PublicSignupPage />} />
         <Route path="/e/:slug" element={<EmbedSignupPage />} />
         <Route path="/k/:slug/*" element={<CreatorInvitePage />} />

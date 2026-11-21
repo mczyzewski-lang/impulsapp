@@ -93,12 +93,34 @@ npm run build
 ```
 
 ```bash
-ELEVENLABS_API_KEY=... ELEVENLABS_VOICE_ID=... OPENAI_API_KEY=... npm run server
+ADMIN_PASSWORD=twoje-haslo npm start
 ```
 
-Serwer serwuje też zbudowany frontend (`dist`) z routingiem po stronie klienta, więc na hostingu wystarczy ustawić
-`npm run server` jako komendę startową i dodać zmienne środowiskowe. Jeśli frontend i serwer stoją pod różnymi adresami,
-ustaw `VITE_API_URL` przy budowaniu.
+Serwer serwuje też zbudowany frontend (`dist`) z routingiem po stronie klienta. `railway.json` ustawia `npm start`
+jako komendę startową. Jeśli frontend i serwer stoją pod różnymi adresami, ustaw `VITE_API_URL` przy budowaniu.
+
+### Panel administratora (`/admin`)
+
+Klucze API wpisuje się w panelu `/admin`, nie w kodzie. Panel działa tylko wtedy, gdy na serwerze jest ustawiona
+zmienna `ADMIN_PASSWORD` — to hasło logowania.
+
+- **Klucze:** ElevenLabs (klucz + głos lektora, listę głosów można pobrać z konta) i OpenAI (klucz + model obrazów).
+  Serwer zapisuje je w `DATA_DIR/settings.json` i nigdy nie odsyła do przeglądarki — panel pokazuje tylko 4 ostatnie znaki.
+  „Sprawdź połączenie” weryfikuje klucz u dostawcy; dla ElevenLabs pokazuje też zużycie kredytów na koncie.
+- **Wydatki:** każde płatne wywołanie trafia do dziennika (`DATA_DIR/usage.jsonl`) z liczbą znaków, minut albo obrazów.
+  Koszt to szacunek liczony ze stawek ustawianych w panelu — wartości startowe są orientacyjne i trzeba je zastąpić
+  własnym cennikiem.
+- **Limit miesięczny:** po jego przekroczeniu serwer przestaje wywoływać płatne usługi, a studio wraca do trybu demo.
+  Dodatkowo każdy adres IP ma limit 30 wywołań AI na 10 minut.
+
+| Zmienna | Znaczenie |
+| --- | --- |
+| `ADMIN_PASSWORD` | hasło do `/admin`; bez niego panel jest wyłączony |
+| `DATA_DIR` | katalog na ustawienia i dziennik (domyślnie `./data`). Na hostingu z ulotnym dyskiem (np. Railway) podłącz trwały wolumen i wskaż go tutaj — inaczej klucze i dziennik znikną przy każdym wdrożeniu |
+| `ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID`, `OPENAI_API_KEY`, `OPENAI_IMAGE_MODEL` | alternatywa dla panelu; wartość wpisana w panelu ma pierwszeństwo |
+
+Ograniczenia: jest jedno hasło administratora (bez kont użytkowników), a endpointy AI są publiczne — chroni je limit
+na adres IP i budżet, nie logowanie twórcy. Przed produkcją trzeba je powiązać z kontami.
 
 Bez serwera albo bez kluczy studio działa w trybie demo: lektor mówi głosem systemowym przeglądarki, napisy powstają
 z tekstu promptera rozłożonego równo na czas nagrania, a infografiki są składane lokalnie z treści scenariusza.
