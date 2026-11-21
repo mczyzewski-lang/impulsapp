@@ -101,7 +101,7 @@ function EditorMock() {
 }
 
 const flow = [
-  { icon: Mic, title: "Wklejasz treść", body: "Notatki, fragment artykułu albo gotowy tekst. Wybierasz układ: hook + treść albo pytanie + treść." },
+  { icon: Mic, title: "Wyciągasz treść z czatu", body: "Jeden prompt w ChatGPT lub Claude zamienia Twoje rozmowy w scenariusze i maile. Wklejasz odpowiedź do Impulsu." },
   { icon: Smartphone, title: "Nagrywasz z ręki", body: "Prompter przewija tekst przy obiektywie. Pytanie czyta lektor, hook i odpowiedź — Ty." },
   { icon: Clapperboard, title: "Montujesz w studiu", body: "Przycinasz początek i koniec, dodajesz napisy i plansze w kolorach swojej marki." },
   { icon: ArrowRight, title: "Publikujesz impuls", body: "Wideo trafia do kanału razem z narzędziem i CTA. Odbiorcy dostają powiadomienie." },

@@ -35,6 +35,7 @@ const CreatorsLanding = lazy(() => import("./landing/CreatorsLanding"));
 const AdminPage = lazy(() => import("./admin/AdminPage"));
 const CreatorPublish = lazy(() => import("./creator/publish/CreatorPublish"));
 const CreatorCalendar = lazy(() => import("./creator/publish/CreatorCalendar"));
+const CreatorContent = lazy(() => import("./creator/CreatorContent"));
 const CreatorLinks = lazy(() => import("./creator/CreatorLinks"));
 const CreatorSettings = lazy(() => import("./creator/CreatorSettings"));
 
@@ -92,6 +93,7 @@ export default function App() {
           <Route path="kanal" element={<CreatorChannelSettings />} />
           <Route path="impuls" element={<CreatorCreateImpulse />} />
           <Route path="materialy" element={<CreatorMaterials />} />
+          <Route path="tresci" element={<CreatorContent />} />
           <Route path="nagraj" element={<CreatorRecorder />} />
           <Route path="montaz/:id" element={<CreatorVideoStudio />} />
           <Route path="publikacja/:id" element={<CreatorPublish />} />

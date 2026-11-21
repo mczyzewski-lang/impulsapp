@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ArrowRight, CameraOff, Circle, Clapperboard, Mic, RotateCcw, Square, Type, Volume2 } from "lucide-react";
 import type { VideoFormat } from "@/data/mock";
 import { speak, stopSpeaking } from "@/integrations/ai";
@@ -29,7 +29,9 @@ function pickMimeType() {
 export default function CreatorRecorder() {
   const navigate = useNavigate();
 
-  const [script, setScript] = useState<Script>(sampleScript);
+  // Scenariusz może przyjść z ekranu „Treści” — wtedy prompter jest od razu gotowy.
+  const incoming = (useLocation().state as { script?: Script } | null)?.script;
+  const [script, setScript] = useState<Script>(incoming ?? sampleScript);
   const [format, setFormat] = useState<VideoFormat>("9:16");
   const [speed, setSpeed] = useState(34);
   const [fontSize, setFontSize] = useState(26);
@@ -173,8 +175,8 @@ export default function CreatorRecorder() {
         title="Nagraj wideo"
         lead="Wklej swoją treść, a prompter poprowadzi Cię przez nagranie. Telefon trzymasz w ręce — tekst przewija się przy obiektywie."
         action={
-          <Link to="/studio/materialy" className={buttonClass("outline")}>
-            Materiały
+          <Link to="/studio/tresci" className={buttonClass("outline")}>
+            Wybierz z Treści
           </Link>
         }
       />

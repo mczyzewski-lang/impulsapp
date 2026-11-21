@@ -39,6 +39,7 @@ npm run build
 | `/studio/kanal` | `CreatorChannelSettings` |
 | `/studio/impuls` | `CreatorCreateImpulse` |
 | `/studio/materialy` | `CreatorMaterials` |
+| `/studio/tresci` | `CreatorContent` — prompt do czatu AI, wklejenie odpowiedzi, baza myśli ze scenariuszami i szkicami maili |
 | `/studio/nagraj` | `CreatorRecorder` — nagrywanie z kamery z prompterem (hook + treść / pytanie + treść) |
 | `/studio/montaz/:id` | `CreatorVideoStudio` — studio wideo: przycinanie, napisy, infografiki w stylu marki |
 | `/studio/publikacja/:id` | `CreatorPublish` — gdzie i kiedy opublikować zmontowane wideo (kanał Impulsu, social media) |

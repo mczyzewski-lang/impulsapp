@@ -136,12 +136,12 @@ Impuls jako jedna pętla dla twórcy, który rośnie organicznie:
 
 | Krok | Co robi twórca | Stan w prototypie |
 | --- | --- | --- |
-| 1. Treść | Wrzuca prompt, dostaje scenariusze (hook / pytanie + treść) | brak — treść wkleja ręcznie |
+| 1. Treść | Wyciąga wiedzę ze swoich rozmów z czatem AI i wkleja ją do Impulsu | jest (ekran „Treści”) |
 | 2. Nagranie | Nagrywa z ręki z prompterem | jest |
 | 3. Montaż | Napisy, plansze w stylu marki, przycięcie | jest (podgląd; bez eksportu pliku) |
 | 4. Dystrybucja | Publikuje w social mediach i w kanale, z planowaniem | jest (social przez Upload-Post) |
 | 5. Przechwycenie | Link w bio → strona zapisu → newsletter | jest strona zapisu i formularz do osadzenia |
-| 6. Newsletter | Maile pisane z tego samego promptu co wideo | brak — są tylko trzy gotowe szablony |
+| 6. Newsletter | Maile z tej samej myśli co wideo | szkice i kolejka są; wysyłki jeszcze nie ma |
 | 7. Awans | Po zapisie zaproszenie do kanału w Impulsie | jest |
 | 8. Relacja | Impulsy, narzędzia, czat odblokowany aktywnością, scoring | jest |
 
@@ -180,3 +180,23 @@ dostawców i porównań (ceny do potwierdzenia przed zakupem):
 
 Przy modelu „jak najwięcej darmowych twórców” rozliczenie za post skaluje się lepiej niż za profil — warto to policzyć
 przed podpisaniem dłuższej umowy.
+
+## 8. Treści z czatu: jak twórca wnosi swoją wiedzę
+
+Twórca ma już swoją wiedzę wypowiedzianą — w rozmowach z ChatGPT, Claude czy innym czatem. Zamiast budować własny
+generator treści, Impuls korzysta z tego, że tamten czat zna jego rozmowy i język.
+
+1. **Prompt z Impulsu.** Ekran „Treści” daje gotowy prompt w dwóch wersjach: „z całej historii” (dla czatów z pamięcią)
+   i „z jednej rozmowy” (wklejany na końcu wątku). Twórca ustawia grupę docelową i liczbę myśli.
+2. **Wymuszony format odpowiedzi.** Prompt każe zapisać każdą myśl jako blok `=== IMPULS n ===` z polami TEMAT, HOOK,
+   PYTANIE, TREŚĆ, ZADANIE, MAIL_TEMAT, MAIL — i zabrania dopisywania faktów, których twórca nie podał.
+3. **Wklejenie.** Impuls rozkłada odpowiedź na pola zwykłym parserem, bez wywołania AI. Toleruje pogrubienia, punktory
+   i nagłówki, a zwykłe notatki dzieli akapitami.
+4. **Jedna myśl, dwa zastosowania.** Każda karta ma scenariusz (do promptera: hook + treść albo pytanie + treść)
+   i szkic maila z automatycznym dopiskiem „tu jest więcej — wideo i narzędzie czekają w kanale”.
+
+Dlaczego tak: zero kosztu AI po stronie Impulsu, treść jest w języku twórcy (a nie generyczna), rozmowy zostają u niego
+— Impuls dostaje tylko to, co sam wkleił — i działa to z każdym czatem.
+
+Możliwe rozszerzenia: import pliku eksportu rozmów, dopracowanie myśli jednym kliknięciem przez OpenAI (klucz jest już
+w panelu administratora), kolejka maili spięta z prawdziwą wysyłką i z terminem publikacji wideo.
