@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus } from "lucide-react";
+import { Clapperboard, Plus, Video as VideoIcon } from "lucide-react";
 import { files, impulseStats, nf, tools, videos } from "@/data/mock";
+import { useRecordings } from "@/state/recordings";
 import { cn } from "@/lib/cn";
 import { Badge } from "@/components/ui/Badge";
 import { buttonClass } from "@/components/ui/Button";
@@ -17,6 +18,9 @@ const fileDownloads: Record<string, number> = { f1: 642, f2: 371, f3: 298, f4: 1
 
 export default function CreatorMaterials() {
   const [tab, setTab] = useState<Tab>("Wideo");
+  const recordings = useRecordings();
+  // Nagrania zrobione w aplikacji, których jeszcze nie ma w kanale.
+  const drafts = recordings.filter((r) => !videos.some((v) => v.id === r.id));
   const counts: Record<Tab, number> = { Wideo: videos.length, Narzędzia: tools.length, Pliki: files.length };
 
   return (
@@ -25,9 +29,14 @@ export default function CreatorMaterials() {
         title="Materiały"
         lead="Wszystko, co jest w Twoim kanale. Materiały zostają dostępne dla każdej nowej osoby, która dołączy."
         action={
-          <Link to="/studio/impuls" className={buttonClass("dark")}>
-            <Plus className="size-4.5" /> Dodaj impuls
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link to="/studio/nagraj" className={buttonClass("outline")}>
+              <VideoIcon className="size-4.5" /> Nagraj wideo
+            </Link>
+            <Link to="/studio/impuls" className={buttonClass("dark")}>
+              <Plus className="size-4.5" /> Dodaj impuls
+            </Link>
+          </div>
         }
       />
 
@@ -48,6 +57,21 @@ export default function CreatorMaterials() {
 
       <Card className="divide-y divide-line">
         {tab === "Wideo" &&
+          drafts.map((r) => (
+            <div key={r.id} className="flex items-center gap-4 p-3.5">
+              <video src={r.src} poster={r.image} muted playsInline preload="metadata" className="h-14 w-24 shrink-0 rounded-xl bg-ink-900 object-cover" />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold">{r.title}</p>
+                <p className="text-xs text-ink-400">Nagrane w aplikacji · {r.createdAt} · format {r.format}</p>
+              </div>
+              <Link to={`/studio/montaz/${r.id}`} className={buttonClass("dark", "sm")}>
+                <Clapperboard className="size-4" /> Studio wideo
+              </Link>
+              <Badge tone="amber">Szkic</Badge>
+            </div>
+          ))}
+
+        {tab === "Wideo" &&
           videos.map((v) => {
             const s = impulseStats.find((i) => i.id === v.id);
             return (
@@ -65,7 +89,13 @@ export default function CreatorMaterials() {
                   <p className="text-sm font-semibold tabular-nums">{s?.completion ?? 84}%</p>
                   <p className="text-xs text-ink-400">do końca</p>
                 </div>
-                <Badge tone="green">Opublikowane</Badge>
+                {/* Tylko materiały nagrane w aplikacji da się otworzyć w studiu */}
+                {recordings.some((r) => r.id === v.id) && (
+                  <Link to={`/studio/montaz/${v.id}`} className={buttonClass("outline", "sm")}>
+                    <Clapperboard className="size-4" /> <span className="hidden sm:inline">Studio wideo</span>
+                  </Link>
+                )}
+                <Badge tone="green" className="hidden md:inline-flex">Opublikowane</Badge>
               </div>
             );
           })}

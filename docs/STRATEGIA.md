@@ -75,7 +75,9 @@ Link w mailu
 | Dashboard | 7 KPI (zaproszeni → odblokowali czat), wykres aktywnych, lejek awansu, top odbiorcy, ostatnie odpowiedzi |
 | Mój kanał | Nazwa i obietnica, wideo powitalne, warunki odblokowania czatu, tryb interakcji, podgląd zaproszenia na żywo |
 | Dodaj impuls | Tytuł, opis, wideo, checklista, plik, CTA, powiadomienie — z podglądem u odbiorcy; po publikacji link do maila |
-| Materiały | Wideo / Narzędzia / Pliki ze statystykami |
+| Materiały | Wideo / Narzędzia / Pliki ze statystykami; nagrania z aplikacji mają przycisk „Studio wideo” |
+| Nagraj wideo | Kamera z prompterem: własna treść w układzie hook + treść (czyta twórca) albo pytanie + treść (pytanie czyta lektor) |
+| Studio wideo | Przycinanie, napisy z transkrypcji, infografiki w kolorach marki, oś czasu z podglądem |
 | Odbiorcy | CRM: segmenty zimny / ciepły / aktywny / ambasador, wynik 0–100, wyszukiwarka |
 | Ambasadorzy | Najbardziej zaangażowani, szybkie akcje, lista „blisko awansu” |
 | Czat i interakcje | Aktualne pytanie, odpowiedzi (wyróżnianie), wiadomości (odpowiedz prywatnie / opublikuj), insighty |

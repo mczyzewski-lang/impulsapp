@@ -29,6 +29,9 @@ const CreatorAnalytics = lazy(() => import("./creator/CreatorAnalytics"));
 const CreatorSignupPage = lazy(() => import("./creator/CreatorSignupPage"));
 const PublicSignupPage = lazy(() => import("./landing/PublicSignupPage"));
 const EmbedSignupPage = lazy(() => import("./landing/EmbedSignupPage"));
+const CreatorRecorder = lazy(() => import("./creator/studio/CreatorRecorder"));
+const CreatorVideoStudio = lazy(() => import("./creator/studio/CreatorVideoStudio"));
+const CreatorsLanding = lazy(() => import("./landing/CreatorsLanding"));
 const CreatorLinks = lazy(() => import("./creator/CreatorLinks"));
 const CreatorSettings = lazy(() => import("./creator/CreatorSettings"));
 
@@ -46,6 +49,7 @@ function ScrollToTop() {
 /**
  * Mapa tras:
  *   /            landing page
+ *   /tworcy      podstrona dla twórców (studio wideo, prompter)
  *   /s/:slug     publiczna strona zapisu twórcy
  *   /e/:slug     sam formularz zapisu do osadzenia (iframe) na stronie twórcy
  *   /k/:slug     zaproszenie do kanału twórcy (wejście odbiorcy z linku)
@@ -61,6 +65,7 @@ export default function App() {
         {/* W aplikacji ze sklepu nie pokazujemy strony marketingowej — start od razu w kanale. */}
         <Route path="/" element={isNative ? <Navigate to="/app" replace /> : <LandingPage />} />
 
+        <Route path="/tworcy" element={<CreatorsLanding />} />
         <Route path="/s/:slug" element={<PublicSignupPage />} />
         <Route path="/e/:slug" element={<EmbedSignupPage />} />
         <Route path="/k/:slug/*" element={<CreatorInvitePage />} />
@@ -82,6 +87,8 @@ export default function App() {
           <Route path="kanal" element={<CreatorChannelSettings />} />
           <Route path="impuls" element={<CreatorCreateImpulse />} />
           <Route path="materialy" element={<CreatorMaterials />} />
+          <Route path="nagraj" element={<CreatorRecorder />} />
+          <Route path="montaz/:id" element={<CreatorVideoStudio />} />
           <Route path="odbiorcy" element={<CreatorAudience />} />
           <Route path="ambasadorzy" element={<CreatorAmbassadors />} />
           <Route path="interakcje" element={<CreatorInteractions />} />

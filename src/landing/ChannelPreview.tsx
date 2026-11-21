@@ -18,7 +18,7 @@ export function ChannelPreview() {
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 lg:grid-cols-2">
         <Reveal className="relative mx-auto">
           <div className="absolute inset-6 rounded-full bg-violet-400/30 blur-[80px]" />
-          <PhoneMock className="relative" />
+          <PhoneMock className="relative" view="home" />
         </Reveal>
         <div>
           <SectionHeading

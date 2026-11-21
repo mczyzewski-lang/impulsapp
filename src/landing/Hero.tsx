@@ -15,7 +15,7 @@ export function LandingNav() {
         </Link>
         <nav className="hidden items-center gap-8 text-sm font-medium text-ink-300 md:flex">
           <a href="#jak-to-dziala" className="hover:text-white">Jak to działa</a>
-          <a href="#dla-tworcow" className="hover:text-white">Dla twórców</a>
+          <Link to="/tworcy" className="hover:text-white">Studio twórcy</Link>
           <a href="#dla-odbiorcow" className="hover:text-white">Dla odbiorców</a>
           <a href="#faq" className="hover:text-white">FAQ</a>
         </nav>
@@ -71,7 +71,7 @@ export function Hero() {
         >
           <PhoneMock />
           <motion.div
-            className="absolute top-28 -left-32 hidden w-56 rounded-2xl border border-white/10 bg-ink-800/90 p-3.5 shadow-xl backdrop-blur sm:block"
+            className="absolute top-24 -left-36 hidden w-56 rounded-2xl border border-white/10 bg-ink-800/90 p-3.5 shadow-xl backdrop-blur sm:block"
             animate={{ y: [0, -8, 0] }}
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
           >

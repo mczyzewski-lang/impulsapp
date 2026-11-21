@@ -24,6 +24,7 @@ npm run build
 | Trasa | Widok |
 | --- | --- |
 | `/` | `LandingPage` |
+| `/tworcy` | `CreatorsLanding` — podstrona dla twórców: prompter i studio wideo |
 | `/s/:slug` | `PublicSignupPage` — publiczna strona zapisu twórcy; po zapisie podgląd maila z linkiem do kanału |
 | `/e/:slug` | `EmbedSignupPage` — sam formularz zapisu do osadzenia w iframe na stronie twórcy (`?motyw=jasny`, `?naglowek=0`) |
 | `/k/:slug` | `CreatorInvitePage` — zaproszenie do kanału (wejście z linku twórcy) |
@@ -38,6 +39,8 @@ npm run build
 | `/studio/kanal` | `CreatorChannelSettings` |
 | `/studio/impuls` | `CreatorCreateImpulse` |
 | `/studio/materialy` | `CreatorMaterials` |
+| `/studio/nagraj` | `CreatorRecorder` — nagrywanie z kamery z prompterem (hook + treść / pytanie + treść) |
+| `/studio/montaz/:id` | `CreatorVideoStudio` — studio wideo: przycinanie, napisy, infografiki w stylu marki |
 | `/studio/odbiorcy`, `/studio/ambasadorzy` | `CreatorAudience`, `CreatorAmbassadors` |
 | `/studio/interakcje` | `CreatorInteractions` |
 | `/studio/analityka` | `CreatorAnalytics` |
@@ -70,6 +73,39 @@ src/
 ```
 
 Tokeny designu (kolory `ink-*`, `volt-*`, fonty) są w `src/index.css` w bloku `@theme`.
+
+## Studio wideo i integracje AI
+
+Nagrywanie (`/studio/nagraj`) używa prawdziwej kamery i mikrofonu przeglądarki (`getUserMedia` + `MediaRecorder`), więc wymaga
+HTTPS albo `localhost`. Nagrania żyją w pamięci karty — po odświeżeniu znikają, bo nie ma backendu, który by je przechował.
+
+Integracje działają przez serwer pośredniczący `server/index.mjs` (klucze API nie mogą trafić do przeglądarki):
+
+| Ścieżka | Usługa | Do czego |
+| --- | --- | --- |
+| `POST /api/tts` | ElevenLabs Text to Speech | lektor czytający pytanie w prompterze |
+| `POST /api/transcribe` | ElevenLabs Speech to Text | napisy z nagrania |
+| `POST /api/infographic` | OpenAI Images | infografiki w stylu marki |
+| `GET /api/health` | — | informuje frontend, które integracje są włączone |
+
+```bash
+npm run build
+```
+
+```bash
+ELEVENLABS_API_KEY=... ELEVENLABS_VOICE_ID=... OPENAI_API_KEY=... npm run server
+```
+
+Serwer serwuje też zbudowany frontend (`dist`) z routingiem po stronie klienta, więc na hostingu wystarczy ustawić
+`npm run server` jako komendę startową i dodać zmienne środowiskowe. Jeśli frontend i serwer stoją pod różnymi adresami,
+ustaw `VITE_API_URL` przy budowaniu.
+
+Bez serwera albo bez kluczy studio działa w trybie demo: lektor mówi głosem systemowym przeglądarki, napisy powstają
+z tekstu promptera rozłożonego równo na czas nagrania, a infografiki są składane lokalnie z treści scenariusza.
+Wywołania do ElevenLabs i OpenAI nie były testowane na żywych kluczach.
+
+Czego studio jeszcze nie robi: nie eksportuje zmontowanego pliku. Przycięcie, napisy i plansze widać w podglądzie,
+ale „wypalenie” ich w wideo wymaga renderowania po stronie serwera.
 
 ## Co jest mockiem
 
@@ -130,4 +166,7 @@ Przed publikacją w sklepach:
   oraz intent-filter z `android:autoVerify="true"`,
 - dodaj `@capacitor/push-notifications` (nowe impulsy),
 - przenieś stan z `localStorage` do `@capacitor/preferences` lub na backend — iOS może czyścić `localStorage` przy braku miejsca,
-- przygotuj ikonę i splash screen (`@capacitor/assets`).
+- przygotuj ikonę i splash screen (`@capacitor/assets`),
+- dodaj uprawnienia do kamery i mikrofonu dla nagrywania wideo: w `ios/App/App/Info.plist` klucze
+  `NSCameraUsageDescription` i `NSMicrophoneUsageDescription`, a w `android/app/src/main/AndroidManifest.xml`
+  uprawnienia `CAMERA`, `RECORD_AUDIO` i `MODIFY_AUDIO_SETTINGS`.

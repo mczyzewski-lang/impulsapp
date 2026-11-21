@@ -43,6 +43,9 @@ export function ForCreators() {
               Stwórz kanał w Impulsie
               <ArrowRight className="size-5" />
             </Link>
+            <Link to="/tworcy" className="mt-4 flex items-center gap-2 text-sm font-semibold text-violet-700">
+              Zobacz studio wideo z prompterem <ArrowRight className="size-4" />
+            </Link>
             <p className="mt-6 flex items-center gap-2.5 text-sm font-semibold text-ink-600">
               <BarChart3 className="size-4.5 text-violet-600" />
               Daj odbiorcom powód, żeby wracali.
