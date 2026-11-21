@@ -7,8 +7,8 @@ import CreatorInvitePage from "./recipient/CreatorInvitePage";
 import OnboardingPage from "./recipient/OnboardingPage";
 import RecipientLayout from "./recipient/RecipientLayout";
 import UserChannelHome from "./recipient/UserChannelHome";
-import UserVideoPage, { UserVideosPage } from "./recipient/UserVideoPage";
-import UserToolsPage, { UserToolPage } from "./recipient/UserToolsPage";
+import UserVideosPage from "./recipient/UserVideoPage";
+import UserToolsPage from "./recipient/UserToolsPage";
 import UserFilesPage from "./recipient/UserFilesPage";
 import { ChatRoute } from "./recipient/UserChatPage";
 import UserProfilePage from "./recipient/UserProfilePage";
@@ -58,9 +58,9 @@ export default function App() {
         <Route path="/app" element={<RecipientLayout />}>
           <Route index element={<UserChannelHome />} />
           <Route path="wideo" element={<UserVideosPage />} />
-          <Route path="wideo/:id" element={<UserVideoPage />} />
+          <Route path="wideo/:id" element={<UserVideosPage />} />
           <Route path="narzedzia" element={<UserToolsPage />} />
-          <Route path="narzedzia/:id" element={<UserToolPage />} />
+          <Route path="narzedzia/:id" element={<UserToolsPage />} />
           <Route path="pliki" element={<UserFilesPage />} />
           <Route path="czat" element={<ChatRoute />} />
           <Route path="profil" element={<UserProfilePage />} />

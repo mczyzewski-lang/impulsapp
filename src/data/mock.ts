@@ -3,10 +3,26 @@
  * który docelowo zastąpi API.
  */
 
-export const creator = {
+export interface Creator {
+  slug: string;
+  name: string;
+  /** Imię w odmianie — potrzebne w tekstach typu „pytanie od Marty”, „czat z Martą”. */
+  firstName: string;
+  firstNameGen: string;
+  firstNameIns: string;
+  role: string;
+  channelName: string;
+  promise: string;
+  bio: string;
+  cadence: string;
+}
+
+export const creator: Creator = {
   slug: "marta-zielinska",
   name: "Marta Zielińska",
-  initials: "MZ",
+  firstName: "Marta",
+  firstNameGen: "Marty",
+  firstNameIns: "Martą",
   role: "Strategia sprzedaży dla ekspertów i małych firm",
   channelName: "Sprzedaż bez spiny",
   promise: "Krótkie impulsy, które zamieniasz w rozmowy z klientami — jeszcze w tym tygodniu.",
@@ -204,6 +220,7 @@ export const selectedQuestions = [
 
 export interface Notification {
   id: string;
+  channel: string;
   title: string;
   body: string;
   time: string;
@@ -212,11 +229,117 @@ export interface Notification {
 }
 
 export const notifications: Notification[] = [
-  { id: "n1", kind: "video", title: "Nowy impuls od Marty", body: "Jedno pytanie, które otwiera rozmowę sprzedażową", time: "2 godz. temu", to: "/app/wideo/pytanie-otwierajace" },
-  { id: "n2", kind: "tool", title: "Nowe narzędzie w kanale", body: "Rozmowa sprzedażowa w 7 krokach", time: "2 godz. temu", to: "/app/narzedzia/rozmowa-7-krokow" },
-  { id: "n3", kind: "chat", title: "Marta zadała pytanie", body: "Co najczęściej blokuje Cię przed wysłaniem follow-upu?", time: "wczoraj", to: "/app/czat" },
-  { id: "n4", kind: "file", title: "Materiał bonusowy czeka", body: "Mapa rozmowy sprzedażowej — wersja do druku", time: "3 dni temu", to: "/app/pliki" },
+  { id: "n1", channel: "marta-zielinska", kind: "video", title: "Nowy impuls od Marty", body: "Jedno pytanie, które otwiera rozmowę sprzedażową", time: "2 godz. temu", to: "/app/wideo/pytanie-otwierajace" },
+  { id: "n2", channel: "marta-zielinska", kind: "tool", title: "Nowe narzędzie w kanale", body: "Rozmowa sprzedażowa w 7 krokach", time: "2 godz. temu", to: "/app/narzedzia/rozmowa-7-krokow" },
+  { id: "n3", channel: "marta-zielinska", kind: "chat", title: "Marta zadała pytanie", body: "Co najczęściej blokuje Cię przed wysłaniem follow-upu?", time: "wczoraj", to: "/app/czat" },
+  { id: "n5", channel: "piotr-malec", kind: "video", title: "Nowy impuls od Piotra", body: "Poduszka finansowa w firmie jednoosobowej", time: "wczoraj", to: "/app/wideo/poduszka" },
+  { id: "n4", channel: "marta-zielinska", kind: "file", title: "Materiał bonusowy czeka", body: "Mapa rozmowy sprzedażowej — wersja do druku", time: "3 dni temu", to: "/app/pliki" },
 ];
+
+/* ───────────── Kanały odbiorcy ───────────── */
+
+export interface Channel {
+  creator: Creator;
+  videos: Video[];
+  tools: Tool[];
+  files: FileItem[];
+  weeklyQuestion: { id: string; text: string; context: string };
+  selectedQuestions: { id: string; author: string; question: string; answer: string }[];
+}
+
+/** Drugi kanał — w demo czeka jako zaproszenie w przełączniku kanałów. */
+const piotr: Channel = {
+  creator: {
+    slug: "piotr-malec",
+    name: "Piotr Malec",
+    firstName: "Piotr",
+    firstNameGen: "Piotra",
+    firstNameIns: "Piotrem",
+    role: "Finanse dla freelancerów i małych firm",
+    channelName: "Finanse na spokojnie",
+    promise: "Jedna decyzja finansowa tygodniowo. Bez Excela na trzy zakładki.",
+    bio: "Doradzam jednoosobowym firmom, jak przestać żyć od faktury do faktury.",
+    cadence: "Nowy impuls w każdy czwartek",
+  },
+  videos: [
+    {
+      id: "start",
+      title: "Zacznij tutaj: jak korzystać z tego kanału",
+      description: "Półtorej minuty o tym, co i kiedy tu wysyłam.",
+      duration: "1:40",
+      date: "Wideo powitalne",
+      tag: "Start",
+      poster: "from-emerald-600 via-teal-800 to-ink-900",
+      isWelcome: true,
+      takeaways: ["Jeden impuls w tygodniu.", "Każdy kończy się jedną decyzją.", "Aktywność odblokowuje czat."],
+    },
+    {
+      id: "poduszka",
+      title: "Poduszka finansowa w firmie jednoosobowej",
+      description: "Ile to „wystarczająco” i jak ją zbudować bez zaciskania pasa.",
+      duration: "3:55",
+      date: "20 listopada",
+      tag: "Impuls #6",
+      poster: "from-sky-500 via-cyan-800 to-ink-900",
+      takeaways: ["Policz koszty stałe, nie przychody.", "Cel: 3 miesiące kosztów.", "Zadanie: ustaw stały przelew po każdej fakturze."],
+      toolId: "kalkulator-poduszki",
+    },
+    {
+      id: "stawka",
+      title: "Stawka godzinowa, która pokrywa urlop i chorobę",
+      description: "Dlaczego etatowa pensja podzielona przez 168 to za mało.",
+      duration: "4:10",
+      date: "13 listopada",
+      tag: "Impuls #5",
+      poster: "from-amber-500 via-orange-800 to-ink-900",
+      takeaways: ["Licz 140, nie 168 godzin.", "Dolicz składki, sprzęt i przestoje.", "Zadanie: przelicz swoją stawkę jeszcze dziś."],
+    },
+  ],
+  tools: [
+    {
+      id: "kalkulator-poduszki",
+      title: "Poduszka finansowa krok po kroku",
+      description: "Pięć punktów, po których wiesz, ile i gdzie odkładać.",
+      kind: "Checklista",
+      time: "10 min",
+      items: [
+        "Znam swoje miesięczne koszty stałe",
+        "Mam osobne konto na poduszkę",
+        "Stały przelew po każdej fakturze jest ustawiony",
+        "Wiem, po ilu miesiącach osiągnę cel",
+        "Mam zasadę, kiedy wolno sięgnąć po poduszkę",
+      ],
+    },
+  ],
+  files: [
+    { id: "p1", title: "Arkusz kosztów stałych", format: "XLSX", size: "62 KB", date: "20 listopada", isBonus: true },
+    { id: "p2", title: "Ściąga: stawka godzinowa", format: "PDF", size: "310 KB", date: "13 listopada" },
+  ],
+  weeklyQuestion: {
+    id: "pq6",
+    text: "Na ile miesięcy wystarczyłyby Ci dziś oszczędności firmy?",
+    context: "Odpowiedź widzę tylko ja. Zbiorcze wyniki pokażę w kolejnym impulsie.",
+  },
+  selectedQuestions: [
+    {
+      id: "ps1",
+      author: "Ola",
+      question: "Czy poduszkę trzymać na koncie firmowym?",
+      answer: "Na osobnym, najlepiej oszczędnościowym. Ma być widoczna, ale nie pod ręką.",
+    },
+  ],
+};
+
+export const channels: Channel[] = [
+  { creator, videos, tools, files, weeklyQuestion, selectedQuestions },
+  piotr,
+];
+
+export const defaultChannel = channels[0];
+
+export function channelBySlug(slug: string | undefined): Channel {
+  return channels.find((c) => c.creator.slug === slug) ?? defaultChannel;
+}
 
 /* ───────────── Panel twórcy ───────────── */
 

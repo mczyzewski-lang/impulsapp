@@ -1,54 +1,62 @@
-import { useState, type FormEvent } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useEffect, useState, type FormEvent } from "react";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Check, Mail } from "lucide-react";
-import { creator, videos } from "@/data/mock";
+import { channelBySlug } from "@/data/mock";
 import { useProgress } from "@/state/progress";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { UnlockProgress } from "@/components/UnlockProgress";
-import { PhoneFrame } from "./RecipientLayout";
+import { PhoneFrame, ScreenScroll } from "./RecipientLayout";
 import { VideoPlayer } from "./VideoPlayer";
 
-const welcome = videos[0];
-
-/** Onboarding: konto → wideo powitalne → zasady odblokowania czatu. */
+/**
+ * Onboarding do kanału: konto → wideo powitalne → zasady odblokowania czatu.
+ * Osoba, która ma już konto (dołącza do kolejnego kanału), pomija pierwszy krok.
+ */
 export default function OnboardingPage() {
   const navigate = useNavigate();
-  const { joined, join, markWatched, watched } = useProgress();
-  const [wasJoined] = useState(joined);
-  const [step, setStep] = useState(0);
+  const [params] = useSearchParams();
+  const { joined, joinedSlugs, name: savedName, join, markWatched, watched } = useProgress();
+
+  const { creator, videos } = channelBySlug(params.get("k") ?? undefined);
+  const welcome = videos[0];
+
+  const [wasInChannel] = useState(joinedSlugs.includes(creator.slug));
+  const [hadAccount] = useState(joined);
+  const [step, setStep] = useState(hadAccount ? 1 : 0);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
-  if (wasJoined) return <Navigate to="/app" replace />;
+  // Istniejące konto: dołączenie do kanału nie wymaga ponownej rejestracji.
+  useEffect(() => {
+    if (hadAccount && !wasInChannel) join(creator.slug);
+  }, [hadAccount, wasInChannel, join, creator.slug]);
+
+  if (wasInChannel) return <Navigate to="/app" replace />;
 
   function createAccount(e: FormEvent) {
     e.preventDefault();
-    join(name.trim() || "Gość");
+    join(creator.slug, name.trim() || "Gość");
     setStep(1);
   }
 
+  const displayName = savedName || name;
+  const steps = hadAccount ? [1, 2] : [0, 1, 2];
+
   return (
     <PhoneFrame className="bg-white">
-      <div className="pt-safe flex flex-1 flex-col px-5 pb-6">
-        <div className="flex items-center gap-2 py-5" aria-label={`Krok ${step + 1} z 3`}>
-          {[0, 1, 2].map((i) => (
-            <span key={i} className={`h-1.5 flex-1 rounded-full transition-colors ${i <= step ? "bg-ink-900" : "bg-ink-900/10"}`} />
-          ))}
-        </div>
+      <div className="pt-safe flex shrink-0 items-center gap-2 px-5 pt-5 pb-1" aria-label={`Krok ${steps.indexOf(step) + 1} z ${steps.length}`}>
+        {steps.map((i) => (
+          <span key={i} className={`h-1.5 flex-1 rounded-full transition-colors ${i <= step ? "bg-ink-900" : "bg-ink-900/10"}`} />
+        ))}
+      </div>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={step}
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -24 }}
-            transition={{ duration: 0.25 }}
-            className="flex flex-1 flex-col"
-          >
-            {step === 0 && (
-              <form onSubmit={createAccount} className="flex flex-1 flex-col">
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div key={step} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="flex min-h-0 flex-1 flex-col">
+          {step === 0 && (
+            <form onSubmit={createAccount} className="flex min-h-0 flex-1 flex-col">
+              <ScreenScroll className="px-5 pt-4 pb-4">
                 <div className="flex items-center gap-3 rounded-2xl bg-paper p-3">
                   <Avatar name={creator.name} />
                   <p className="text-sm text-ink-600">
@@ -77,29 +85,28 @@ export default function OnboardingPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     autoComplete="email"
-                    placeholder="ten sam, na który dostajesz maile od Marty"
+                    placeholder="ten sam, na który przyszło zaproszenie"
                     className="mt-1.5 h-12 w-full rounded-xl border border-line bg-white px-4 text-base font-normal outline-none focus:border-ink-900"
                   />
                 </label>
+              </ScreenScroll>
+              <Footer>
+                <Button type="submit" variant="dark" size="lg" className="w-full">
+                  <Mail className="size-5" />
+                  Załóż konto i wejdź do kanału
+                </Button>
+                <p className="mt-3 text-center text-xs text-ink-400">Masz już konto? Wpisz swój email — zalogujemy Cię linkiem.</p>
+              </Footer>
+            </form>
+          )}
 
-                <div className="mt-auto pt-6">
-                  <Button type="submit" variant="dark" size="lg" className="w-full">
-                    <Mail className="size-5" />
-                    Załóż konto i wejdź do kanału
-                  </Button>
-                  <p className="mt-3 text-center text-xs text-ink-400">
-                    Masz już konto? Wpisz swój email — zalogujemy Cię linkiem.
-                  </p>
-                </div>
-              </form>
-            )}
-
-            {step === 1 && (
-              <div className="flex flex-1 flex-col">
-                <p className="text-sm font-semibold text-violet-600">Witaj w kanale{name ? `, ${name}` : ""}</p>
-                <h1 className="mt-1 text-[1.75rem] leading-tight font-bold">Zacznij od krótkiego wideo od Marty</h1>
+          {step === 1 && (
+            <>
+              <ScreenScroll className="px-5 pt-4 pb-4">
+                <p className="text-sm font-semibold text-violet-600">Witaj w kanale{displayName ? `, ${displayName}` : ""}</p>
+                <h1 className="mt-1 text-[1.75rem] leading-tight font-bold">Zacznij od krótkiego wideo od {creator.firstNameGen}</h1>
                 <p className="mt-2 text-ink-500">{welcome.description}</p>
-                <VideoPlayer video={welcome} className="mt-5" onComplete={() => markWatched(welcome.id)} />
+                <VideoPlayer video={welcome} className="mt-5 aspect-square" onComplete={() => markWatched(welcome.id)} />
                 <ul className="mt-5 space-y-2.5">
                   {welcome.takeaways.map((t) => (
                     <li key={t} className="flex gap-2.5 text-[15px] text-ink-600">
@@ -108,37 +115,44 @@ export default function OnboardingPage() {
                     </li>
                   ))}
                 </ul>
-                <div className="mt-auto pt-6">
-                  <Button variant="dark" size="lg" className="w-full" onClick={() => setStep(2)}>
-                    {watched.includes(welcome.id) ? "Dalej" : "Obejrzę później"}
-                    <ArrowRight className="size-5" />
-                  </Button>
-                </div>
-              </div>
-            )}
+              </ScreenScroll>
+              <Footer>
+                <Button variant="dark" size="lg" className="w-full" onClick={() => setStep(2)}>
+                  {watched.includes(welcome.id) ? "Dalej" : "Obejrzę później"}
+                  <ArrowRight className="size-5" />
+                </Button>
+              </Footer>
+            </>
+          )}
 
-            {step === 2 && (
-              <div className="flex flex-1 flex-col">
+          {step === 2 && (
+            <>
+              <ScreenScroll className="px-5 pt-4 pb-4">
                 <p className="text-sm font-semibold text-violet-600">Jeszcze jedno</p>
-                <h1 className="mt-1 text-[1.75rem] leading-tight font-bold">Czat z Martą odblokujesz aktywnością</h1>
+                <h1 className="mt-1 text-[1.75rem] leading-tight font-bold">Czat z {creator.firstNameIns} odblokujesz aktywnością</h1>
                 <p className="mt-2 text-ink-500">
-                  Nie musisz nic kupować. Wystarczy, że obejrzysz, pobierzesz i odpowiesz. Dzięki temu Marta rozmawia
+                  Nie musisz nic kupować. Wystarczy, że obejrzysz, pobierzesz i odpowiesz. Dzięki temu {creator.firstName} rozmawia
                   z ludźmi, którzy naprawdę korzystają z materiałów.
                 </p>
                 <div className="pointer-events-none mt-6">
                   <UnlockProgress />
                 </div>
-                <div className="mt-auto pt-6">
-                  <Button size="lg" className="w-full" onClick={() => navigate("/app")}>
-                    Przejdź do kanału
-                    <ArrowRight className="size-5" />
-                  </Button>
-                </div>
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </div>
+              </ScreenScroll>
+              <Footer>
+                <Button size="lg" className="w-full" onClick={() => navigate("/app")}>
+                  Przejdź do kanału
+                  <ArrowRight className="size-5" />
+                </Button>
+              </Footer>
+            </>
+          )}
+        </motion.div>
+      </AnimatePresence>
     </PhoneFrame>
   );
+}
+
+/** Główny przycisk kroku — zawsze w tym samym miejscu na dole ekranu. */
+function Footer({ children }: { children: React.ReactNode }) {
+  return <div className="pb-safe-4 shrink-0 border-t border-line bg-white px-5 pt-4">{children}</div>;
 }

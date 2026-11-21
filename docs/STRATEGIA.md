@@ -55,12 +55,13 @@ Link w mailu
             3. Jak odblokować czat
             └─ Kanał (/app) — dolna nawigacja: Start · Wideo · Narzędzia · Pliki · Czat
                  ├─ Start         impuls tygodnia, narzędzie, postęp odblokowania, pytanie, bonus
-                 ├─ Wideo         lista → widok materiału (odtwarzacz, wnioski, powiązane narzędzie)
-                 ├─ Narzędzia     lista → checklista z postępem i pobraniem
+                 ├─ Wideo         pionowy, pełnoekranowy feed (przesunięcie = kolejny materiał),
+                 │                boczne akcje: Wnioski · Narzędzie · Dalej
+                 ├─ Narzędzia     lista; checklista otwiera się w arkuszu nad ekranem
                  ├─ Pliki         materiały bonusowe i dokumenty
                  └─ Czat          zablokowany: 3 kroki + pytanie twórcy
                                   odblokowany: odpowiedź, jedna wiadomość, wybrane pytania
-            Nagłówek: Powiadomienia · Profil (statystyki, kanały, ustawienia)
+            Nagłówek: przełącznik kanałów (kanały + oczekujące zaproszenia) · Powiadomienia · Profil
 ```
 
 ## 4. Mapa ekranów — panel twórcy

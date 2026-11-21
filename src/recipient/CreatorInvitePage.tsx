@@ -1,31 +1,46 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckSquare, Gift, Lock, MessageCircle, Play, ShieldCheck, Zap } from "lucide-react";
-import { creator } from "@/data/mock";
+import { channelBySlug } from "@/data/mock";
 import { useProgress } from "@/state/progress";
 import { Avatar } from "@/components/ui/Avatar";
-import { buttonClass } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
-import { PhoneFrame } from "./RecipientLayout";
-
-const perks = [
-  { icon: Play, title: "Wideo powitalne", body: "2 minuty o tym, jak korzystać z kanału." },
-  { icon: Gift, title: "Prywatny materiał", body: "Mapa rozmowy sprzedażowej — tylko dla osób z kanału." },
-  { icon: CheckSquare, title: "Checklista do wdrożenia", body: "Rozmowa sprzedażowa w 7 krokach." },
-  { icon: Zap, title: "Nowe impulsy do działania", body: creator.cadence + ". Krótko i konkretnie." },
-  { icon: MessageCircle, title: "Możliwość odblokowania czatu", body: "Oglądaj i wdrażaj, a napiszesz bezpośrednio do Marty." },
-];
+import { PhoneFrame, ScreenScroll } from "./RecipientLayout";
 
 /** Ekran, na który trafia odbiorca po kliknięciu linku od twórcy. */
 export default function CreatorInvitePage() {
-  const { joined } = useProgress();
+  const navigate = useNavigate();
+  const { slug } = useParams();
+  const { joinedSlugs, switchChannel } = useProgress();
+
+  const { creator, videos, tools, files } = channelBySlug(slug);
+  const alreadyIn = joinedSlugs.includes(creator.slug);
+  const bonus = files.find((f) => f.isBonus);
+
+  const perks = [
+    { icon: Play, title: "Wideo powitalne", body: `${videos[0].duration} o tym, jak korzystać z kanału.` },
+    ...(bonus ? [{ icon: Gift, title: "Prywatny materiał", body: `${bonus.title} — tylko dla osób z kanału.` }] : []),
+    ...(tools[0] ? [{ icon: CheckSquare, title: `${tools[0].kind} do wdrożenia`, body: `${tools[0].title}.` }] : []),
+    { icon: Zap, title: "Nowe impulsy do działania", body: `${creator.cadence}. Krótko i konkretnie.` },
+    { icon: MessageCircle, title: "Możliwość odblokowania czatu", body: `Oglądaj i wdrażaj, a napiszesz bezpośrednio do ${creator.firstNameGen}.` },
+  ];
+
+  function accept() {
+    if (alreadyIn) {
+      switchChannel(creator.slug);
+      navigate("/app");
+    } else {
+      navigate(`/app/start?k=${creator.slug}`);
+    }
+  }
 
   return (
     <PhoneFrame className="bg-ink-900 text-white">
       <div className="bg-grid absolute inset-0" />
       <div className="absolute -top-24 left-1/2 size-80 -translate-x-1/2 rounded-full bg-violet-600/40 blur-[90px]" />
 
-      <div className="pt-safe relative flex flex-1 flex-col px-5">
+      <ScreenScroll className="pt-safe px-5 pb-4">
         <div className="flex items-center justify-between py-4">
           <Link to="/" aria-label="Impuls">
             <Logo className="text-lg" />
@@ -65,18 +80,18 @@ export default function CreatorInvitePage() {
             ))}
           </ul>
         </motion.div>
+      </ScreenScroll>
 
-        {/* CTA zawsze widoczne — przykleja się do dołu ekranu */}
-        <div className="sticky bottom-0 z-10 -mx-5 mt-auto bg-linear-to-t from-ink-900 from-75% to-transparent px-5 pt-8 pb-4">
-          <Link to={joined ? "/app" : "/app/start"} className={buttonClass("primary", "lg", "w-full")}>
-            {joined ? "Wróć do kanału" : "Odbierz materiał i dołącz do kanału"}
-            <ArrowRight className="size-5" />
-          </Link>
-          <p className="pb-safe mt-4 flex items-center justify-center gap-2 text-xs text-ink-400">
-            <ShieldCheck className="size-4" />
-            Bez feedu i reklam. Widzisz tylko kanały, do których Cię zaproszono.
-          </p>
-        </div>
+      {/* CTA poza obszarem przewijania — zawsze widoczne na dole ekranu */}
+      <div className="pb-safe relative z-10 shrink-0 border-t border-white/10 bg-ink-900 px-5 pt-4">
+        <Button size="lg" className="w-full" onClick={accept}>
+          {alreadyIn ? "Wróć do kanału" : "Odbierz materiał i dołącz do kanału"}
+          <ArrowRight className="size-5" />
+        </Button>
+        <p className="flex items-center justify-center gap-2 py-3 text-xs text-ink-400">
+          <ShieldCheck className="size-4 shrink-0" />
+          Bez feedu i reklam. Widzisz tylko kanały, do których Cię zaproszono.
+        </p>
       </div>
     </PhoneFrame>
   );

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { CheckSquare, FileText, MessageCircleQuestion, Play } from "lucide-react";
-import { notifications, type Notification } from "@/data/mock";
+import { channelBySlug, notifications, type Notification } from "@/data/mock";
 import { useProgress } from "@/state/progress";
 import { cn } from "@/lib/cn";
 import { PageTitle } from "./RecipientLayout";
@@ -14,7 +14,9 @@ const kindStyle: Record<Notification["kind"], { icon: typeof Play; className: st
 };
 
 export default function UserNotificationsPage() {
-  const { notificationsRead: readNow, readNotifications } = useProgress();
+  const navigate = useNavigate();
+  const { notificationsRead: readNow, readNotifications, joinedSlugs, switchChannel } = useProgress();
+  const visible = notifications.filter((n) => joinedSlugs.includes(n.channel));
   // Stan z chwili wejścia — nowe powiadomienia pozostają wyróżnione podczas tej wizyty.
   const [notificationsRead] = useState(readNow);
 
@@ -26,22 +28,29 @@ export default function UserNotificationsPage() {
     <div>
       <PageTitle title="Powiadomienia" lead="Tylko z kanałów, do których należysz." />
       <ul className="space-y-2.5">
-        {notifications.map((n, i) => {
+        {visible.map((n, i) => {
           const { icon: Icon, className } = kindStyle[n.kind];
           const unread = !notificationsRead && i < 3;
           return (
             <li key={n.id}>
-              <Link to={n.to} className={cn("flex items-start gap-3 rounded-2xl border p-3.5", unread ? "border-violet-200 bg-violet-50" : "border-line bg-white")}>
+              <button
+                type="button"
+                onClick={() => {
+                  // Powiadomienie może dotyczyć innego kanału niż aktualnie otwarty.
+                  switchChannel(n.channel);
+                  navigate(n.to);
+                }}
+                className={cn("flex w-full items-start gap-3 rounded-2xl border p-3.5 text-left", unread ? "border-violet-200 bg-violet-50" : "border-line bg-white")}>
                 <span className={cn("inline-flex size-10 shrink-0 items-center justify-center rounded-xl", className)}>
                   <Icon className="size-4.5" />
                 </span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold">{n.title}</p>
-                  <p className="text-sm text-ink-500">{n.body}</p>
-                  <p className="mt-1 text-xs text-ink-400">{n.time}</p>
-                </div>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-semibold">{n.title}</span>
+                  <span className="block text-sm text-ink-500">{n.body}</span>
+                  <span className="mt-1 block text-xs text-ink-400">{channelBySlug(n.channel).creator.channelName} · {n.time}</span>
+                </span>
                 {unread && <span className="mt-1.5 size-2.5 shrink-0 rounded-full bg-violet-600" aria-label="Nowe" />}
-              </Link>
+              </button>
             </li>
           );
         })}

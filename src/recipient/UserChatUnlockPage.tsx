@@ -1,7 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Check, Lock, Send } from "lucide-react";
-import { creator, weeklyQuestion } from "@/data/mock";
 import { useProgress } from "@/state/progress";
 import { cn } from "@/lib/cn";
 import { Avatar } from "@/components/ui/Avatar";
@@ -10,7 +9,8 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 
 /** Ekran odblokowania czatu — widoczny, dopóki warunki nie są spełnione. */
 export default function UserChatUnlockPage() {
-  const { steps, stepsDone, answer, submitAnswer } = useProgress();
+  const { channel, steps, stepsDone, answer, submitAnswer } = useProgress();
+  const { creator, weeklyQuestion } = channel;
   const [draft, setDraft] = useState("");
 
   function onSubmit(e: FormEvent) {
@@ -29,13 +29,13 @@ export default function UserChatUnlockPage() {
             </span>
           </span>
           <div>
-            <h1 className="text-xl leading-tight font-bold">Odblokuj czat z twórcą</h1>
+            <h1 className="text-xl leading-tight font-bold">Odblokuj czat z {creator.firstNameIns}</h1>
             <p className="text-sm text-ink-300">{stepsDone}/{steps.length} kroków wykonane</p>
           </div>
         </div>
         <ProgressBar value={stepsDone} max={steps.length} className="mt-5 h-2.5 bg-white/15" label="Postęp odblokowania czatu" />
         <p className="mt-4 text-sm text-ink-300">
-          Marta odpowiada osobom, które korzystają z materiałów. Wykonaj trzy kroki, a napiszesz do niej bezpośrednio.
+          {creator.firstName} odpowiada osobom, które korzystają z materiałów. Wykonaj trzy kroki, a wyślesz swoją wiadomość.
         </p>
       </div>
 
@@ -68,7 +68,7 @@ export default function UserChatUnlockPage() {
 
             {step.id === "answers" && !answer && (
               <form onSubmit={onSubmit} className="mt-3 rounded-xl bg-paper p-3">
-                <p className="text-xs font-semibold text-violet-700">Pytanie od Marty</p>
+                <p className="text-xs font-semibold text-violet-700">Pytanie od {creator.firstNameGen}</p>
                 <p className="mt-1 font-display text-base leading-snug font-bold">{weeklyQuestion.text}</p>
                 <textarea
                   value={draft}

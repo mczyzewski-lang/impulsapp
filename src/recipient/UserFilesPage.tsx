@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Check, Download, FileAudio, FileSpreadsheet, FileText, Gift } from "lucide-react";
-import { files, type FileItem } from "@/data/mock";
+import type { FileItem } from "@/data/mock";
+import { useProgress } from "@/state/progress";
 import { cn } from "@/lib/cn";
 import { Badge } from "@/components/ui/Badge";
 import { PageTitle } from "./RecipientLayout";
@@ -13,6 +14,8 @@ const formatStyle: Record<FileItem["format"], { icon: typeof FileText; className
 };
 
 export default function UserFilesPage() {
+  const { channel } = useProgress();
+  const { files } = channel;
   const [saved, setSaved] = useState<string[]>([]);
 
   return (

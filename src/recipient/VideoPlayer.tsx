@@ -44,7 +44,7 @@ export function VideoPlayer({ video, className, onComplete }: VideoPlayerProps) 
   }
 
   return (
-    <div className={cn("relative aspect-video overflow-hidden rounded-2xl bg-linear-to-br text-white", video.poster, className)}>
+    <div className={cn("relative aspect-video w-full overflow-hidden rounded-2xl bg-linear-to-br text-white", video.poster, className)}>
       <div className="bg-grid absolute inset-0 opacity-60" />
       <div className="absolute -top-10 -right-10 size-40 rounded-full bg-white/15 blur-3xl" />
 

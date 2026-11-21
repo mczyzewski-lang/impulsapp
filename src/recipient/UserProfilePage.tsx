@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Bell, ChevronRight, LogOut, RotateCcw, ShieldCheck } from "lucide-react";
-import { creator, tools, videos } from "@/data/mock";
+import { defaultChannel } from "@/data/mock";
 import { useProgress } from "@/state/progress";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
@@ -10,7 +10,8 @@ import { useState } from "react";
 
 export default function UserProfilePage() {
   const navigate = useNavigate();
-  const { name, watched, downloaded, answer, chatUnlocked, reset } = useProgress();
+  const { name, channel, joinedChannels, switchChannel, watched, downloaded, answer, chatUnlocked, reset } = useProgress();
+  const { videos, tools } = channel;
   const [push, setPush] = useState(true);
   const [digest, setDigest] = useState(false);
 
@@ -22,7 +23,7 @@ export default function UserProfilePage() {
 
   function resetDemo() {
     reset();
-    navigate(`/k/${creator.slug}`);
+    navigate(`/k/${defaultChannel.creator.slug}`);
   }
 
   return (
@@ -37,6 +38,7 @@ export default function UserProfilePage() {
         </div>
       </div>
 
+      <p className="-mb-2 text-sm font-semibold text-ink-500">Aktywność w kanale „{channel.creator.channelName}”</p>
       <div className="grid grid-cols-3 gap-2.5">
         {stats.map((s) => (
           <Card key={s.label} className="p-3 text-center">
@@ -48,13 +50,27 @@ export default function UserProfilePage() {
 
       <section>
         <h2 className="mb-2 text-sm font-semibold text-ink-500">Twoje kanały</h2>
-        <Card className="flex items-center gap-3 p-3.5">
-          <Avatar name={creator.name} />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold">{creator.channelName}</p>
-            <p className="truncate text-xs text-ink-400">{creator.name}</p>
-          </div>
-          <ChevronRight className="size-5 text-ink-300" />
+        <Card className="divide-y divide-line">
+          {joinedChannels.map(({ channel: c, stepsDone, chatUnlocked: unlocked }) => (
+            <button
+              key={c.creator.slug}
+              type="button"
+              onClick={() => {
+                switchChannel(c.creator.slug);
+                navigate("/app");
+              }}
+              className="flex w-full items-center gap-3 p-3.5 text-left"
+            >
+              <Avatar name={c.creator.name} />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-semibold">{c.creator.channelName}</span>
+                <span className="block truncate text-xs text-ink-400">
+                  {c.creator.name} · {unlocked ? "czat odblokowany" : `${stepsDone}/3 do czatu`}
+                </span>
+              </span>
+              <ChevronRight className="size-5 text-ink-300" />
+            </button>
+          ))}
         </Card>
         <p className="mt-2 flex items-start gap-2 text-xs text-ink-400">
           <ShieldCheck className="mt-0.5 size-4 shrink-0" />

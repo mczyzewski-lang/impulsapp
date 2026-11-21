@@ -27,8 +27,8 @@ npm run build
 | `/k/:slug` | `CreatorInvitePage` — zaproszenie do kanału (wejście z linku twórcy) |
 | `/app/start` | `OnboardingPage` — konto → wideo powitalne → zasady odblokowania czatu |
 | `/app` | `UserChannelHome` |
-| `/app/wideo`, `/app/wideo/:id` | `UserVideosPage`, `UserVideoPage` |
-| `/app/narzedzia`, `/app/narzedzia/:id` | `UserToolsPage`, `UserToolPage` |
+| `/app/wideo`, `/app/wideo/:id` | `UserVideosPage` — pionowy, pełnoekranowy feed wideo (`:id` otwiera feed od wskazanego materiału) |
+| `/app/narzedzia`, `/app/narzedzia/:id` | `UserToolsPage`; narzędzie otwiera się w arkuszu `ToolSheet` nad bieżącym ekranem |
 | `/app/pliki` | `UserFilesPage` |
 | `/app/czat` | `UserChatUnlockPage` lub `UserChatPage` (zależnie od aktywności) |
 | `/app/profil`, `/app/powiadomienia` | `UserProfilePage`, `UserNotificationsPage` |
@@ -43,6 +43,12 @@ npm run build
 | `/studio/ustawienia` | `CreatorSettings` |
 
 Do `/app` nie da się wejść bez zaproszenia — niezalogowany odbiorca jest przekierowany na `/k/marta-zielinska`.
+Odbiorca może należeć do wielu kanałów: nagłówek kanału to przełącznik, a drugi kanał demo (`/k/piotr-malec`) czeka w nim jako zaproszenie.
+Aktywność i odblokowanie czatu liczą się osobno dla każdego kanału.
+
+Aplikacja odbiorcy ma stałą powłokę: nagłówek i dolna nawigacja stoją w miejscu, przewija się tylko treść
+(na desktopie wewnątrz ramki telefonu). Szczegóły — narzędzie, wnioski z wideo, lista kanałów — otwierają się jako warstwy
+nad ekranem, zamiast przenosić użytkownika do innej zakładki.
 Demo resetuje się w Profilu („Zresetuj demo”).
 
 ## Struktura
@@ -61,7 +67,7 @@ Tokeny designu (kolory `ink-*`, `volt-*`, fonty) są w `src/index.css` w bloku `
 
 ## Co jest mockiem
 
-- Odtwarzacz wideo jest symulowany: „odtwarzanie” trwa 5 sekund i zalicza materiał jako obejrzany.
+- Wideo jest symulowane: aktywny materiał w feedzie „gra” 5 sekund i wtedy liczy się jako obejrzany.
 - Pobieranie narzędzi/plików, upload w kreatorze impulsu, zapisy ustawień i wysyłka wiadomości zmieniają tylko stan lokalny.
 - Liczby w panelu twórcy oraz persona „Marta Zielińska” są fikcyjne.
 
