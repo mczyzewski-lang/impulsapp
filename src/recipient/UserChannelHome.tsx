@@ -11,7 +11,7 @@ import { useAppUi } from "./RecipientLayout";
 /** Pionowa okładka materiału — zapowiedź pełnoekranowego wideo. */
 function ReelCover({ poster, className, children }: { poster: string; className?: string; children: React.ReactNode }) {
   return (
-    <div className={cn("relative overflow-hidden rounded-2xl bg-linear-to-b text-white", poster, className)}>
+    <div className={cn("theme-base relative overflow-hidden rounded-2xl bg-linear-to-b text-white", poster, className)}>
       <div className="bg-grid absolute inset-0 opacity-50" />
       <div className="absolute -top-10 -right-10 size-40 rounded-full bg-white/15 blur-3xl" />
       <div className="absolute inset-x-0 bottom-0 h-2/3 bg-linear-to-t from-black/80 to-transparent" />
@@ -99,7 +99,7 @@ export default function UserChannelHome() {
       </Card>
 
       {bonus && (
-        <Link to="/app/pliki" className="flex items-center gap-3 rounded-2xl bg-linear-to-br from-violet-600 to-indigo-700 p-4 text-white">
+        <Link to="/app/pliki" className="theme-base flex items-center gap-3 rounded-2xl bg-linear-to-br from-violet-600 to-indigo-700 p-4 text-white">
           <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-white/15">
             <Gift className="size-5" />
           </span>

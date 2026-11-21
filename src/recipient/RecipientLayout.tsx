@@ -23,11 +23,11 @@ const tabs = [
  * na desktopie wygląda jak urządzenie. Sama się nie przewija — przewija się
  * tylko obszar treści (ScreenScroll / <main>), więc nagłówek i nawigacja stoją w miejscu.
  */
-export function PhoneFrame({ children, className }: { children: ReactNode; className?: string }) {
+export function PhoneFrame({ children, className, dark = false }: { children: ReactNode; className?: string; dark?: boolean }) {
   return (
     <div className="h-dvh overflow-hidden bg-ink-900 sm:flex sm:items-center sm:justify-center sm:bg-ink-950 sm:p-6">
       <div className="h-full sm:max-h-[880px] sm:w-[412px] sm:rounded-[3rem] sm:border sm:border-white/10 sm:bg-ink-800 sm:p-2.5 sm:shadow-2xl sm:shadow-black/60">
-        <div className={cn("relative flex h-full flex-col overflow-hidden bg-paper sm:rounded-[2.4rem]", className)}>{children}</div>
+        <div className={cn("relative flex h-full flex-col overflow-hidden bg-paper sm:rounded-[2.4rem]", dark && "theme-dark", className)}>{children}</div>
       </div>
     </div>
   );
@@ -118,7 +118,7 @@ function ChannelSwitcher({ open, onClose }: { open: boolean; onClose: () => void
                       role="menuitemradio"
                       aria-checked={active}
                       onClick={() => pick(c.creator.slug)}
-                      className={cn("flex w-full items-center gap-3 rounded-2xl px-2 py-2.5 text-left", active ? "bg-paper" : "hover:bg-paper/60")}
+                      className={cn("flex w-full items-center gap-3 rounded-2xl px-2 py-2.5 text-left", active ? "bg-ink-900/8" : "hover:bg-ink-900/5")}
                     >
                       <Avatar name={c.creator.name} />
                       <span className="min-w-0 flex-1">
@@ -228,15 +228,9 @@ export default function RecipientLayout() {
 
   return (
     <AppUiContext.Provider value={ui}>
-      <PhoneFrame className={immersive ? "bg-black" : undefined}>
-        <header
-          className={cn(
-            "pt-safe z-20 shrink-0",
-            immersive
-              ? "absolute inset-x-0 top-0 bg-linear-to-b from-black/70 to-transparent text-white"
-              : "border-b border-line bg-white",
-          )}
-        >
+      <PhoneFrame dark>
+        {/* Nagłówek i nawigacja wyglądają identycznie na każdej zakładce */}
+        <header className="pt-safe z-20 shrink-0 border-b border-line bg-paper">
           <div className="flex items-center gap-1 px-3 py-2.5">
             <button
               type="button"
@@ -244,7 +238,7 @@ export default function RecipientLayout() {
               aria-expanded={switcherOpen}
               aria-label={`Kanał: ${creator.channelName}. Zmień kanał`}
               onClick={() => setSwitcherOpen(true)}
-              className={cn("flex min-w-0 flex-1 items-center gap-3 rounded-2xl p-1 pr-2 text-left", immersive ? "hover:bg-white/10" : "hover:bg-ink-900/5")}
+              className="flex min-w-0 flex-1 items-center gap-3 rounded-2xl p-1 pr-2 text-left hover:bg-ink-900/5"
             >
               <Avatar name={creator.name} />
               <span className="min-w-0">
@@ -252,19 +246,19 @@ export default function RecipientLayout() {
                   <span className="truncate">{creator.channelName}</span>
                   <ChevronDown className="size-4 shrink-0 opacity-60" strokeWidth={2.5} />
                 </span>
-                <span className={cn("block truncate text-xs", immersive ? "text-white/70" : "text-ink-400")}>Prywatny kanał · {creator.name}</span>
+                <span className="block truncate text-xs text-ink-400">Prywatny kanał · {creator.name}</span>
               </span>
             </button>
             <Link
               to="/app/powiadomienia"
               aria-label="Powiadomienia"
-              className={cn("relative inline-flex size-10 shrink-0 items-center justify-center rounded-full", immersive ? "hover:bg-white/10" : "text-ink-600 hover:bg-ink-900/5")}
+              className="relative inline-flex size-10 shrink-0 items-center justify-center rounded-full text-ink-600 hover:bg-ink-900/5"
             >
               <Bell className="size-5" />
-              {!notificationsRead && <span className="absolute top-2 right-2 size-2.5 rounded-full bg-violet-500 ring-2 ring-white" />}
+              {!notificationsRead && <span className="absolute top-2 right-2 size-2.5 rounded-full bg-violet-500 ring-2 ring-paper" />}
             </Link>
             <Link to="/app/profil" aria-label="Twój profil" className="shrink-0 p-1">
-              <Avatar name={name || "Ty"} size="sm" className="from-ink-700 to-ink-900 ring-1 ring-white/30" />
+              <Avatar name={name || "Ty"} size="sm" className="from-ink-700 to-ink-900" />
             </Link>
           </div>
         </header>
@@ -279,7 +273,7 @@ export default function RecipientLayout() {
           </motion.div>
         </main>
 
-        <nav className={cn("pb-safe z-20 shrink-0 border-t", immersive ? "border-white/10 bg-black text-white" : "border-line bg-white")} aria-label="Kanał">
+        <nav className="pb-safe z-20 shrink-0 border-t border-line bg-paper" aria-label="Kanał">
           <ul className="grid grid-cols-5">
             {tabs.map(({ to, label, icon: Icon, end }) => (
               <li key={to}>
@@ -289,17 +283,17 @@ export default function RecipientLayout() {
                   className={({ isActive }) =>
                     cn(
                       "relative flex flex-col items-center gap-1 pt-2.5 pb-2 text-[11px] font-semibold transition-colors",
-                      immersive ? (isActive ? "text-white" : "text-white/50") : isActive ? "text-ink-900" : "text-ink-400",
+                      isActive ? "text-ink-900" : "text-ink-400",
                     )
                   }
                 >
                   {({ isActive }) => (
                     <>
-                      {isActive && <span className={cn("absolute top-0 h-0.5 w-8 rounded-full", immersive ? "bg-volt-400" : "bg-ink-900")} />}
+                      {isActive && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-volt-400" />}
                       <span className="relative">
                         <Icon className="size-5.5" strokeWidth={isActive ? 2.4 : 2} />
                         {label === "Czat" && !chatUnlocked && (
-                          <Lock className={cn("absolute -top-1 -right-2 size-3.5 rounded-full p-0.5", immersive ? "bg-black text-volt-400" : "bg-white text-violet-600")} strokeWidth={3} />
+                          <Lock className="absolute -top-1 -right-2 size-3.5 rounded-full bg-paper p-0.5 text-volt-400" strokeWidth={3} />
                         )}
                       </span>
                       {label}
@@ -336,7 +330,7 @@ export default function RecipientLayout() {
 
         <Sheet open={celebrate} onClose={() => setCelebrate(false)} title="Wszystkie kroki wykonane">
           <div className="pt-2 pb-2 text-center">
-            <span className="inline-flex size-16 items-center justify-center rounded-2xl bg-volt-400">
+            <span className="inline-flex size-16 items-center justify-center rounded-2xl bg-volt-400 text-ink-950">
               <LockOpen className="size-7" />
             </span>
             <h2 className="mt-5 text-2xl font-bold">Czat z {creator.firstNameIns} odblokowany</h2>

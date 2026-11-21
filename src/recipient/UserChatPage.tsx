@@ -29,7 +29,7 @@ export default function UserChatPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3 rounded-2xl bg-volt-400 p-4 text-ink-950">
+      <div className="theme-base flex items-center gap-3 rounded-2xl bg-volt-400 p-4 text-ink-950">
         <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-ink-900 text-volt-400">
           <LockOpen className="size-5" />
         </span>

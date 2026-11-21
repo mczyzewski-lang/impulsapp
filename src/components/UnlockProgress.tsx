@@ -9,7 +9,7 @@ export function UnlockProgress({ compact = false }: { compact?: boolean }) {
   const { steps, stepsDone, chatUnlocked } = useProgress();
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-ink-900 text-white">
+    <div className="theme-base overflow-hidden rounded-2xl border border-white/10 bg-ink-800 text-white">
       <Link to="/app/czat" className="flex items-center gap-3 p-4">
         <span className={cn("inline-flex size-10 shrink-0 items-center justify-center rounded-xl", chatUnlocked ? "bg-volt-400 text-ink-950" : "bg-white/10 text-volt-400")}>
           {chatUnlocked ? <LockOpen className="size-5" /> : <Lock className="size-5" />}

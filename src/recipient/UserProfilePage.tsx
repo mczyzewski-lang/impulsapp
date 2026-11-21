@@ -38,15 +38,17 @@ export default function UserProfilePage() {
         </div>
       </div>
 
-      <p className="-mb-2 text-sm font-semibold text-ink-500">Aktywność w kanale „{channel.creator.channelName}”</p>
-      <div className="grid grid-cols-3 gap-2.5">
+      <section>
+        <h2 className="mb-2 text-sm font-semibold text-ink-500">Aktywność w kanale „{channel.creator.channelName}”</h2>
+        <div className="grid grid-cols-3 gap-2.5">
         {stats.map((s) => (
           <Card key={s.label} className="p-3 text-center">
             <p className="font-display text-xl font-bold tabular-nums">{s.value}</p>
             <p className="mt-0.5 text-[11px] leading-tight text-ink-500">{s.label}</p>
           </Card>
         ))}
-      </div>
+        </div>
+      </section>
 
       <section>
         <h2 className="mb-2 text-sm font-semibold text-ink-500">Twoje kanały</h2>

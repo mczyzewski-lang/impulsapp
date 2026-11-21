@@ -45,7 +45,7 @@ export default function OnboardingPage() {
   const steps = hadAccount ? [1, 2] : [0, 1, 2];
 
   return (
-    <PhoneFrame className="bg-white">
+    <PhoneFrame dark>
       <div className="pt-safe flex shrink-0 items-center gap-2 px-5 pt-5 pb-1" aria-label={`Krok ${steps.indexOf(step) + 1} z ${steps.length}`}>
         {steps.map((i) => (
           <span key={i} className={`h-1.5 flex-1 rounded-full transition-colors ${i <= step ? "bg-ink-900" : "bg-ink-900/10"}`} />
@@ -57,7 +57,7 @@ export default function OnboardingPage() {
           {step === 0 && (
             <form onSubmit={createAccount} className="flex min-h-0 flex-1 flex-col">
               <ScreenScroll className="px-5 pt-4 pb-4">
-                <div className="flex items-center gap-3 rounded-2xl bg-paper p-3">
+                <div className="flex items-center gap-3 rounded-2xl bg-white p-3">
                   <Avatar name={creator.name} />
                   <p className="text-sm text-ink-600">
                     Dołączasz do kanału <span className="font-semibold text-ink-900">{creator.channelName}</span>
@@ -91,7 +91,7 @@ export default function OnboardingPage() {
                 </label>
               </ScreenScroll>
               <Footer>
-                <Button type="submit" variant="dark" size="lg" className="w-full">
+                <Button type="submit" size="lg" className="w-full">
                   <Mail className="size-5" />
                   Załóż konto i wejdź do kanału
                 </Button>
@@ -117,7 +117,7 @@ export default function OnboardingPage() {
                 </ul>
               </ScreenScroll>
               <Footer>
-                <Button variant="dark" size="lg" className="w-full" onClick={() => setStep(2)}>
+                <Button size="lg" className="w-full" onClick={() => setStep(2)}>
                   {watched.includes(welcome.id) ? "Dalej" : "Obejrzę później"}
                   <ArrowRight className="size-5" />
                 </Button>
@@ -154,5 +154,5 @@ export default function OnboardingPage() {
 
 /** Główny przycisk kroku — zawsze w tym samym miejscu na dole ekranu. */
 function Footer({ children }: { children: React.ReactNode }) {
-  return <div className="pb-safe-4 shrink-0 border-t border-line bg-white px-5 pt-4">{children}</div>;
+  return <div className="pb-safe-4 shrink-0 border-t border-line bg-paper px-5 pt-4">{children}</div>;
 }

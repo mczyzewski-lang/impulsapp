@@ -48,6 +48,9 @@ Do `/app` nie da się wejść bez zaproszenia — niezalogowany odbiorca jest pr
 Odbiorca może należeć do wielu kanałów: nagłówek kanału to przełącznik, a drugi kanał demo (`/k/piotr-malec`) czeka w nim jako zaproszenie.
 Aktywność i odblokowanie czatu liczą się osobno dla każdego kanału.
 
+Aplikacja odbiorcy jest w całości ciemna (klasa `theme-dark` w `src/index.css` podmienia wartości tokenów kolorów,
+a `theme-base` przywraca je na wideo i kolorowych kartach), więc nagłówek i nawigacja wyglądają tak samo na każdej zakładce.
+
 Aplikacja odbiorcy ma stałą powłokę: nagłówek i dolna nawigacja stoją w miejscu, przewija się tylko treść
 (na desktopie wewnątrz ramki telefonu). Szczegóły — narzędzie, wnioski z wideo, lista kanałów — otwierają się jako warstwy
 nad ekranem, zamiast przenosić użytkownika do innej zakładki.

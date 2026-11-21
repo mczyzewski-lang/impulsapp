@@ -44,7 +44,7 @@ export function ToolSheet({ toolId, onClose }: { toolId: string | null; onClose:
                       <span
                         className={cn(
                           "mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-lg border-2 transition-colors",
-                          isChecked ? "border-ink-900 bg-ink-900 text-volt-400" : "border-ink-300",
+                          isChecked ? "border-volt-400 bg-volt-400 text-ink-950" : "border-ink-300",
                         )}
                       >
                         {isChecked && <Check className="size-4" strokeWidth={3} />}

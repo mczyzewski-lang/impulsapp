@@ -20,11 +20,11 @@ export default function UserChatUnlockPage() {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-3xl bg-ink-900 p-5 text-white">
+      <div className="theme-base rounded-3xl border border-white/10 bg-ink-800 p-5 text-white">
         <div className="flex items-center gap-4">
           <span className="relative">
             <Avatar name={creator.name} size="lg" />
-            <span className="absolute -right-1 -bottom-1 inline-flex size-6 items-center justify-center rounded-full bg-volt-400 text-ink-950 ring-2 ring-ink-900">
+            <span className="absolute -right-1 -bottom-1 inline-flex size-6 items-center justify-center rounded-full bg-volt-400 text-ink-950 ring-2 ring-ink-800">
               <Lock className="size-3.5" strokeWidth={2.5} />
             </span>
           </span>

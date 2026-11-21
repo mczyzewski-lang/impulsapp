@@ -96,7 +96,7 @@ function Reel({ video, tool, creatorName, position, active, watched, isLast, sho
   const railIcon = "inline-flex size-12 items-center justify-center rounded-full bg-white/15 backdrop-blur transition-colors hover:bg-white/25";
 
   return (
-    <section data-reel={video.id} className="relative h-full snap-start snap-always overflow-hidden bg-black text-white">
+    <section data-reel={video.id} className="theme-base relative h-full snap-start snap-always overflow-hidden bg-black text-white">
       {/* Tło dla formatów innych niż pionowy */}
       {!vertical && <div className={cn("absolute inset-0 scale-125 bg-linear-to-b opacity-40 blur-3xl", video.poster)} />}
 
@@ -124,7 +124,8 @@ function Reel({ video, tool, creatorName, position, active, watched, isLast, sho
       {/* Cały ekran jest przyciskiem odtwórz / wstrzymaj */}
       <button type="button" onClick={toggle} aria-label={finished ? "Odtwórz ponownie" : playing ? "Wstrzymaj" : "Odtwórz"} className="absolute inset-0" />
 
-      <div className="absolute right-3 bottom-28 z-10 flex flex-col items-center gap-4">
+      {/* Po obejrzeniu na dole pojawia się przycisk narzędzia — pasek akcji przesuwa się nad niego */}
+      <div className={cn("absolute right-3 z-10 flex flex-col items-center gap-4 transition-[bottom] duration-200", finished && tool ? "bottom-48" : "bottom-28")}>
         <button type="button" onClick={onOpenNotes} className={railButton}>
           <span className={railIcon}>
             <ListChecks className="size-5.5" />
@@ -188,7 +189,7 @@ function Reel({ video, tool, creatorName, position, active, watched, isLast, sho
       </div>
 
       {showSwipeHint && !finished && (
-        <p className="pointer-events-none absolute inset-x-0 top-36 flex animate-bounce flex-col items-center text-xs font-semibold text-white/80">
+        <p className="pointer-events-none absolute inset-x-0 top-20 flex animate-bounce flex-col items-center text-xs font-semibold text-white/80">
           <ChevronsUp className="size-5" />
           Przesuń w górę, żeby zobaczyć kolejny
         </p>
@@ -215,7 +216,7 @@ function VideoList({ videos, watched, onPick, toggle }: { videos: Video[]; watch
           <li key={v.id}>
             <button type="button" onClick={() => onPick(v.id)} className="flex w-full gap-3 rounded-2xl border border-line bg-white p-2.5 text-left">
               {/* Miniatura zachowuje proporcje nagrania */}
-              <span className="flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-ink-900">
+              <span className="theme-base flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-black">
                 <span className={cn("relative block bg-linear-to-b", v.poster, formatAspect[v.format], v.format === "16:9" ? "w-full" : "h-full")}>
                   <span className="absolute top-1/2 left-1/2 inline-flex size-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-ink-900">
                     <Play className="ml-0.5 size-3" fill="currentColor" />
@@ -329,7 +330,7 @@ export default function UserVideosPage() {
       </div>
 
       {/* Przełącznik widoku w prawym górnym narożniku, pod nagłówkiem kanału */}
-      <div className="absolute top-[calc(env(safe-area-inset-top)+4.5rem)] right-3 z-20">
+      <div className="theme-base absolute top-3 right-3 z-20">
         <ViewToggle view="feed" onChange={changeView} tone="dark" />
       </div>
 

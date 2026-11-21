@@ -73,3 +73,77 @@
 @utility pb-safe-4 {
   padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }
+
+/*
+ * Ciemny motyw aplikacji odbiorcy.
+ * Zamiast przepisywać klasy na każdym ekranie, w obrębie .theme-dark podmieniamy wartości tokenów:
+ * tła stają się ciemne, tekst jasny, a pastelowe plakietki — półprzezroczyste.
+ * .theme-base przywraca wartości wyjściowe tam, gdzie treść leży na wideo lub kolorowym tle.
+ */
+:root {
+  --base-white: var(--color-white);
+  --base-paper: var(--color-paper);
+  --base-line: var(--color-line);
+  --base-ink-900: var(--color-ink-900);
+  --base-ink-800: var(--color-ink-800);
+  --base-ink-700: var(--color-ink-700);
+  --base-ink-600: var(--color-ink-600);
+  --base-ink-500: var(--color-ink-500);
+  --base-ink-400: var(--color-ink-400);
+  --base-ink-300: var(--color-ink-300);
+  --base-violet-600: var(--color-violet-600);
+  --base-violet-700: var(--color-violet-700);
+  --base-volt-200: var(--color-volt-200);
+  --base-volt-700: var(--color-volt-700);
+}
+
+.theme-dark {
+  --color-paper: #070b18;
+  --color-white: #121a33;
+  --color-line: #222c4e;
+  --color-ink-900: #f5f6fa;
+  --color-ink-800: #e4e7f0;
+  --color-ink-700: #d3d8e8;
+  --color-ink-600: #c3c9de;
+  --color-ink-500: #a3accb;
+  --color-ink-400: #7d88ae;
+  --color-ink-300: #56628f;
+
+  --color-violet-50: rgb(139 92 246 / 0.12);
+  --color-violet-100: rgb(139 92 246 / 0.22);
+  --color-violet-200: rgb(139 92 246 / 0.4);
+  --color-violet-300: #8b5cf6;
+  --color-violet-600: #a78bfa;
+  --color-violet-700: #c4b5fd;
+  --color-volt-200: rgb(200 245 66 / 0.16);
+  --color-volt-700: #d8f96f;
+  --color-sky-100: rgb(14 165 233 / 0.18);
+  --color-sky-700: #7dd3fc;
+  --color-amber-100: rgb(245 158 11 / 0.18);
+  --color-amber-800: #fcd34d;
+  --color-emerald-100: rgb(16 185 129 / 0.18);
+  --color-emerald-700: #6ee7b7;
+  --color-rose-100: rgb(244 63 94 / 0.18);
+  --color-rose-600: #fb7185;
+  --color-rose-700: #fda4af;
+
+  color: var(--color-ink-900);
+  color-scheme: dark;
+}
+
+.theme-base {
+  --color-white: var(--base-white);
+  --color-paper: var(--base-paper);
+  --color-line: var(--base-line);
+  --color-ink-900: var(--base-ink-900);
+  --color-ink-800: var(--base-ink-800);
+  --color-ink-700: var(--base-ink-700);
+  --color-ink-600: var(--base-ink-600);
+  --color-ink-500: var(--base-ink-500);
+  --color-ink-400: var(--base-ink-400);
+  --color-ink-300: var(--base-ink-300);
+  --color-violet-600: var(--base-violet-600);
+  --color-violet-700: var(--base-violet-700);
+  --color-volt-200: var(--base-volt-200);
+  --color-volt-700: var(--base-volt-700);
+}

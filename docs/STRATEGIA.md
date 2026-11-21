@@ -91,6 +91,7 @@ Link w mailu
 - **Akcent pomocniczy:** fiolet (linki, etykiety, wykresy), żeby limonka nie traciła znaczenia.
 - **Typografia:** Bricolage Grotesque (nagłówki, liczby) + Inter (tekst). Fonty są w paczce — działają offline w Capacitorze.
 - **Kształt:** duże zaokrąglenia (16–40 px), cienkie obramowania, minimalne cienie; subtelna siatka na ciemnych tłach.
+- **Aplikacja odbiorcy jest ciemna** na wszystkich zakładkach (jak feed wideo); landing i panel twórcy pozostają jasne z ciemnymi akcentami.
 - **Mobile-first:** aplikacja odbiorcy to jedna kolumna z dolną nawigacją (na desktopie w ramce telefonu);
   panel twórcy ma sidebar na desktopie i wysuwane menu na telefonie. Pola dotykowe ≥ 40 px, obsługa safe area.
 
