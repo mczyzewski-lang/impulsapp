@@ -13,17 +13,23 @@ const tabs = [
   { to: "/app/czat", label: "Czat", icon: MessageCircle },
 ];
 
-/** Rama „telefonu”: na desktopie wąska kolumna, na mobile pełny ekran. */
+/**
+ * Rama „telefonu”. Na mobile pełny ekran i zwykłe przewijanie strony;
+ * na desktopie urządzenie o stałej wysokości z przewijaniem wewnątrz ekranu.
+ */
 export function PhoneFrame({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className="min-h-dvh bg-ink-900 sm:bg-ink-950 sm:py-6">
-      <div
-        className={cn(
-          "relative mx-auto flex min-h-dvh w-full max-w-md flex-col bg-paper sm:min-h-[calc(100dvh-3rem)] sm:overflow-hidden sm:rounded-[2rem] sm:shadow-2xl",
-          className,
-        )}
-      >
-        {children}
+    <div className="min-h-dvh bg-ink-900 sm:flex sm:h-dvh sm:items-center sm:justify-center sm:overflow-hidden sm:bg-ink-950 sm:p-6">
+      <div className="sm:h-full sm:max-h-[880px] sm:w-[412px] sm:rounded-[3rem] sm:border sm:border-white/10 sm:bg-ink-800 sm:p-2.5 sm:shadow-2xl sm:shadow-black/60">
+        <div
+          data-phone-scroll
+          className={cn(
+            "no-scrollbar relative flex min-h-dvh w-full flex-col bg-paper sm:h-full sm:min-h-0 sm:overflow-x-hidden sm:overflow-y-auto sm:overscroll-contain sm:rounded-[2.4rem]",
+            className,
+          )}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );

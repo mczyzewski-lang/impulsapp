@@ -25,7 +25,7 @@ export default function CreatorInvitePage() {
       <div className="bg-grid absolute inset-0" />
       <div className="absolute -top-24 left-1/2 size-80 -translate-x-1/2 rounded-full bg-violet-600/40 blur-[90px]" />
 
-      <div className="pt-safe relative flex flex-1 flex-col px-5 pb-6">
+      <div className="pt-safe relative flex flex-1 flex-col px-5">
         <div className="flex items-center justify-between py-4">
           <Link to="/" aria-label="Impuls">
             <Logo className="text-lg" />
@@ -66,7 +66,8 @@ export default function CreatorInvitePage() {
           </ul>
         </motion.div>
 
-        <div className="mt-auto pt-6">
+        {/* CTA zawsze widoczne — przykleja się do dołu ekranu */}
+        <div className="sticky bottom-0 z-10 -mx-5 mt-auto bg-linear-to-t from-ink-900 from-75% to-transparent px-5 pt-8 pb-4">
           <Link to={joined ? "/app" : "/app/start"} className={buttonClass("primary", "lg", "w-full")}>
             {joined ? "Wróć do kanału" : "Odbierz materiał i dołącz do kanału"}
             <ArrowRight className="size-5" />

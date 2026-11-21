@@ -33,6 +33,8 @@ function ScrollToTop() {
   useEffect(() => {
     // Klamry są celowe: scrollTo może zwracać Promise, a efekt nie może go zwrócić.
     window.scrollTo(0, 0);
+    // Na desktopie aplikacja odbiorcy przewija się wewnątrz ramki telefonu.
+    document.querySelector("[data-phone-scroll]")?.scrollTo(0, 0);
   }, [pathname]);
   return null;
 }
