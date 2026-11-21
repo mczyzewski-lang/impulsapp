@@ -3,6 +3,9 @@
  * który docelowo zastąpi API.
  */
 
+/** Poniżej tej liczby osób nie pokazujemy „Dołącz do N osób” — mała liczba zniechęca zamiast zachęcać. */
+export const SOCIAL_PROOF_MIN = 50;
+
 export interface Creator {
   slug: string;
   name: string;
@@ -12,6 +15,8 @@ export interface Creator {
   firstNameIns: string;
   role: string;
   channelName: string;
+  /** Liczba osób w kanale — pokazywana publicznie dopiero powyżej progu SOCIAL_PROOF_MIN. */
+  members: number;
   promise: string;
   bio: string;
   cadence: string;
@@ -25,6 +30,7 @@ export const creator: Creator = {
   firstNameIns: "Martą",
   role: "Strategia sprzedaży dla ekspertów i małych firm",
   channelName: "Sprzedaż bez spiny",
+  members: 133,
   promise: "Krótkie impulsy, które zamieniasz w rozmowy z klientami — jeszcze w tym tygodniu.",
   bio: "Od 11 lat pomagam ekspertom sprzedawać bez presji i bez skryptów. Tutaj dostajesz to, czego nie mieszczę w mailach.",
   cadence: "Nowy impuls w każdy wtorek",
@@ -266,6 +272,7 @@ const piotr: Channel = {
     firstNameIns: "Piotrem",
     role: "Finanse dla freelancerów i małych firm",
     channelName: "Finanse na spokojnie",
+    members: 38,
     promise: "Jedna decyzja finansowa tygodniowo. Bez Excela na trzy zakładki.",
     bio: "Doradzam jednoosobowym firmom, jak przestać żyć od faktury do faktury.",
     cadence: "Nowy impuls w każdy czwartek",

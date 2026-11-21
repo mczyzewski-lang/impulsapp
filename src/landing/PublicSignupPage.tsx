@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowRight, Check, Inbox, Lock, Mail, Zap } from "lucide-react";
-import { autoEmails, channelBySlug, type Creator, type SignupPage } from "@/data/mock";
+import { ArrowRight, Check, Inbox, Lock, Mail, X, Zap } from "lucide-react";
+import { SOCIAL_PROOF_MIN, autoEmails, channelBySlug, type Creator, type SignupPage } from "@/data/mock";
 import { APP_DOMAIN } from "@/config";
 import { useSignupPage } from "@/state/signupPage";
 import { Avatar } from "@/components/ui/Avatar";
@@ -70,6 +70,13 @@ export default function PublicSignupPage() {
   const [page] = useSignupPage(channel);
   const [email, setEmail] = useState<string | null>(null);
   const welcome = autoEmails[0];
+  const access = [
+    { label: "Newsletter: impulsy e-mailem", included: true },
+    { label: "Wideo", included: false },
+    { label: "Narzędzia i checklisty", included: false },
+    { label: "Pliki bonusowe", included: false },
+    { label: `Czat z ${creator.firstNameIns}`, included: false },
+  ];
 
   return (
     <div className="relative min-h-dvh overflow-hidden bg-ink-900 text-white">
@@ -113,9 +120,33 @@ export default function PublicSignupPage() {
                 </div>
                 <p className="mt-3 font-display text-lg font-bold">{welcome.subject}</p>
                 <p className="mt-1.5 text-[15px] text-ink-600">{welcome.body}</p>
-                <Link to={`/k/${creator.slug}`} className={buttonClass("dark", "md", "mt-4 w-full")}>
-                  {welcome.cta} <ArrowRight className="size-4.5" />
+
+                {/* Co już masz, a co czeka w kanale */}
+                <ul className="mt-4 divide-y divide-line rounded-2xl border border-line text-[15px]">
+                  {access.map(({ label, included }) => (
+                    <li key={label} className="flex items-center gap-3 px-3.5 py-2">
+                      <span
+                        className={
+                          included
+                            ? "inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-volt-400 text-ink-950"
+                            : "inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-ink-900/8 text-ink-400"
+                        }
+                      >
+                        {included ? <Check className="size-3.5" strokeWidth={3} /> : <X className="size-3.5" strokeWidth={3} />}
+                      </span>
+                      <span className={included ? "font-semibold" : "text-ink-500"}>{label}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Link to={`/k/${creator.slug}`} className={buttonClass("primary", "lg", "mt-4 w-full")}>
+                  Rozszerz bezpłatnie o impulsy <ArrowRight className="size-5" />
                 </Link>
+                {creator.members > SOCIAL_PROOF_MIN && (
+                  <p className="mt-3 text-center text-sm text-ink-500">
+                    Dołącz do <span className="font-semibold text-ink-900">{creator.members} osób</span> w kanale
+                  </p>
+                )}
               </div>
             </div>
           )}
