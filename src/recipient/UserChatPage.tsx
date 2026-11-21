@@ -78,7 +78,7 @@ export default function UserChatPage() {
               rows={4}
               aria-label="Twoja wiadomość"
               placeholder="Napisz konkretnie, w czym potrzebujesz pomocy…"
-              className="mt-3 w-full resize-none rounded-xl border border-line bg-paper p-3 text-[15px] outline-none focus:border-ink-900 focus:bg-white"
+              className="mt-3 w-full resize-none rounded-xl border border-line bg-paper p-3 text-base outline-none focus:border-ink-900 focus:bg-white"
             />
             <div className="mt-2 flex items-center justify-between">
               <span className="text-xs text-ink-400 tabular-nums">

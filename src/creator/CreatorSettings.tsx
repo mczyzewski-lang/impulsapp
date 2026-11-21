@@ -67,7 +67,8 @@ export default function CreatorSettings() {
         <Card className="p-5">
           <h2 className="text-lg font-bold">Lista emailowa</h2>
           <p className="mt-1 text-sm text-ink-500">
-            Impuls nie wysyła maili za Ciebie. Nadal korzystasz ze swojego narzędzia do newslettera — tutaj tylko generujesz linki, które w nim wklejasz.
+            Masz listę w swoim narzędziu do newslettera? Zostaje tam — w Impulsie generujesz linki, które w nim wklejasz.
+            Nie masz listy albo chcesz ją powiększać? Włącz stronę zapisu, a Impuls sam wyśle zapisanym maile z linkiem do kanału.
           </p>
         </Card>
 

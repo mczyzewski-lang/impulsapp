@@ -55,6 +55,10 @@ const faq = [
     a: "Przez link, który generujesz w panelu i wklejasz w maila, np. „Odbierz moje prywatne wideo i checklistę w Impulsie”. Po kliknięciu odbiorca widzi zaproszenie do Twojego kanału i zakłada konto.",
   },
   {
+    q: "A jeśli nie mam jeszcze listy emailowej?",
+    a: "Możesz zacząć od strony zapisu w Impulsie. Udostępniasz jej adres, a każda zapisana osoba dostaje od Impulsu maila z linkiem do Twojego kanału i krótkie powiadomienia o nowych impulsach.",
+  },
+  {
     q: "Dlaczego czat jest na początku zablokowany?",
     a: "Żeby interakcja miała sens dla obu stron. Czat odblokowuje się po aktywności — domyślnie po obejrzeniu 3 wideo, pobraniu 1 narzędzia i odpowiedzi na 1 pytanie. Warunki ustawiasz samodzielnie.",
   },

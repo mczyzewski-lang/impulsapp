@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import LandingPage from "./landing/LandingPage";
+import { NativeBridge, isNative } from "./native/NativeBridge";
 
 import CreatorInvitePage from "./recipient/CreatorInvitePage";
 import OnboardingPage from "./recipient/OnboardingPage";
@@ -25,6 +26,8 @@ const CreatorAudience = lazy(() => import("./creator/CreatorAudience"));
 const CreatorAmbassadors = lazy(() => import("./creator/CreatorAudience").then((m) => ({ default: m.CreatorAmbassadors })));
 const CreatorInteractions = lazy(() => import("./creator/CreatorInteractions"));
 const CreatorAnalytics = lazy(() => import("./creator/CreatorAnalytics"));
+const CreatorSignupPage = lazy(() => import("./creator/CreatorSignupPage"));
+const PublicSignupPage = lazy(() => import("./landing/PublicSignupPage"));
 const CreatorLinks = lazy(() => import("./creator/CreatorLinks"));
 const CreatorSettings = lazy(() => import("./creator/CreatorSettings"));
 
@@ -42,6 +45,7 @@ function ScrollToTop() {
 /**
  * Mapa tras:
  *   /            landing page
+ *   /s/:slug     publiczna strona zapisu twórcy
  *   /k/:slug     zaproszenie do kanału twórcy (wejście odbiorcy z linku)
  *   /app/*       aplikacja odbiorcy
  *   /studio/*    panel twórcy
@@ -50,9 +54,12 @@ export default function App() {
   return (
     <Suspense fallback={<div className="min-h-dvh bg-paper" />}>
       <ScrollToTop />
+      <NativeBridge />
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        {/* W aplikacji ze sklepu nie pokazujemy strony marketingowej — start od razu w kanale. */}
+        <Route path="/" element={isNative ? <Navigate to="/app" replace /> : <LandingPage />} />
 
+        <Route path="/s/:slug" element={<PublicSignupPage />} />
         <Route path="/k/:slug/*" element={<CreatorInvitePage />} />
         <Route path="/app/start" element={<OnboardingPage />} />
         <Route path="/app" element={<RecipientLayout />}>
@@ -76,6 +83,7 @@ export default function App() {
           <Route path="ambasadorzy" element={<CreatorAmbassadors />} />
           <Route path="interakcje" element={<CreatorInteractions />} />
           <Route path="analityka" element={<CreatorAnalytics />} />
+          <Route path="strona" element={<CreatorSignupPage />} />
           <Route path="linki" element={<CreatorLinks />} />
           <Route path="ustawienia" element={<CreatorSettings />} />
         </Route>

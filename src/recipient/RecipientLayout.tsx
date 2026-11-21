@@ -44,8 +44,23 @@ export function ScreenScroll({ children, className }: { children: ReactNode; cla
 
 /* ───────────── Akcje dostępne z każdego ekranu kanału ───────────── */
 
+export type VideoView = "feed" | "list";
+
 interface AppUi {
   openTool: (id: string) => void;
+  /** Sposób wyświetlania zakładki Wideo: pełnoekranowy feed albo lista. */
+  videoView: VideoView;
+  setVideoView: (view: VideoView) => void;
+}
+
+const VIDEO_VIEW_KEY = "impuls.videoView";
+
+function loadVideoView(): VideoView {
+  try {
+    return localStorage.getItem(VIDEO_VIEW_KEY) === "list" ? "list" : "feed";
+  } catch {
+    return "feed";
+  }
 }
 const AppUiContext = createContext<AppUi | null>(null);
 
@@ -165,7 +180,17 @@ export default function RecipientLayout() {
   const [toast, setToast] = useState<string | null>(null);
   const [celebrate, setCelebrate] = useState(false);
 
-  const ui = useMemo<AppUi>(() => ({ openTool: setToolId }), []);
+  const [videoView, setVideoViewState] = useState<VideoView>(loadVideoView);
+  const setVideoView = useCallback((view: VideoView) => {
+    setVideoViewState(view);
+    try {
+      localStorage.setItem(VIDEO_VIEW_KEY, view);
+    } catch {
+      /* preferencja zostaje tylko na czas sesji */
+    }
+  }, []);
+
+  const ui = useMemo<AppUi>(() => ({ openTool: setToolId, videoView, setVideoView }), [videoView, setVideoView]);
   const closeTool = useCallback(() => setToolId(null), []);
 
   // Informacja zwrotna po zaliczeniu kroku — żeby postęp nie zmieniał się „po cichu”.
@@ -197,7 +222,9 @@ export default function RecipientLayout() {
   if (!joined) return <Navigate to={`/k/${defaultChannel.creator.slug}`} replace />;
 
   // Wideo jest pełnoekranowe: nagłówek leży na materiale, nawigacja jest ciemna.
-  const immersive = pathname.startsWith("/app/wideo");
+  // Link do konkretnego materiału (/app/wideo/:id) zawsze otwiera feed; lista ma zwykły, jasny układ.
+  const onVideo = pathname.startsWith("/app/wideo");
+  const immersive = onVideo && (videoView === "feed" || pathname.length > "/app/wideo/".length);
 
   return (
     <AppUiContext.Provider value={ui}>
@@ -247,7 +274,7 @@ export default function RecipientLayout() {
           className={cn("no-scrollbar relative min-h-0 flex-1", immersive ? "overflow-hidden" : "overflow-y-auto overscroll-contain px-4 pt-5 pb-8")}
         >
           {/* Krótkie przenikanie zamiast twardego przeskoku między ekranami */}
-          <motion.div key={pathname.split("/").slice(0, 3).join("/")} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.18 }} className={immersive ? "h-full" : undefined}>
+          <motion.div key={pathname.split("/").slice(0, 3).join("/") + (immersive ? ":feed" : "")} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.18 }} className={immersive ? "h-full" : undefined}>
             <Outlet />
           </motion.div>
         </main>

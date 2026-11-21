@@ -55,7 +55,7 @@ export default function CreatorMaterials() {
                 <VideoPoster poster={v.poster} duration={v.duration} className="h-14 w-24 shrink-0" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold">{v.title}</p>
-                  <p className="text-xs text-ink-400">{v.tag} · {v.date}</p>
+                  <p className="text-xs text-ink-400">{v.tag} · {v.date} · format {v.format}</p>
                 </div>
                 <div className="hidden text-right sm:block">
                   <p className="text-sm font-semibold tabular-nums">{nf.format(s?.views ?? 1102)}</p>

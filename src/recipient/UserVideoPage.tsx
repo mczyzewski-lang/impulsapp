@@ -1,15 +1,43 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Check, CheckSquare, ChevronDown, ChevronsUp, ListChecks, Play, RotateCcw } from "lucide-react";
-import type { Tool, Video } from "@/data/mock";
+import { useNavigate, useParams } from "react-router-dom";
+import { Check, CheckSquare, ChevronDown, ChevronsUp, LayoutList, ListChecks, Play, RectangleVertical, RotateCcw } from "lucide-react";
+import { orderVideos, type Tool, type Video } from "@/data/mock";
 import { useProgress } from "@/state/progress";
 import { cn } from "@/lib/cn";
+import { formatAspect } from "@/lib/videoFormat";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
-import { useAppUi } from "./RecipientLayout";
+import { useAppUi, type VideoView } from "./RecipientLayout";
 import { Sheet } from "./Sheet";
 
 const DEMO_SECONDS = 5;
+
+/** Przełącznik widoku w narożniku: pełnoekranowy feed ↔ lista. */
+function ViewToggle({ view, onChange, tone }: { view: VideoView; onChange: (v: VideoView) => void; tone: "dark" | "light" }) {
+  const options = [
+    { id: "feed" as const, label: "Widok pełnoekranowy", icon: RectangleVertical },
+    { id: "list" as const, label: "Lista wideo", icon: LayoutList },
+  ];
+  return (
+    <div role="group" aria-label="Sposób wyświetlania wideo" className={cn("inline-flex rounded-full p-1", tone === "dark" ? "bg-black/40 backdrop-blur" : "bg-ink-900/5")}>
+      {options.map(({ id, label, icon: Icon }) => (
+        <button
+          key={id}
+          type="button"
+          aria-label={label}
+          aria-pressed={view === id}
+          onClick={() => onChange(id)}
+          className={cn(
+            "inline-flex size-9 items-center justify-center rounded-full transition-colors",
+            view === id ? (tone === "dark" ? "bg-white text-ink-900" : "bg-white text-ink-900 shadow-sm") : tone === "dark" ? "text-white/70" : "text-ink-400",
+          )}
+        >
+          <Icon className="size-4.5" />
+        </button>
+      ))}
+    </div>
+  );
+}
 
 interface ReelProps {
   video: Video;
@@ -27,14 +55,16 @@ interface ReelProps {
 }
 
 /**
- * Pojedynczy pionowy materiał. Odtwarzanie jest symulowane (brak plików wideo w demo):
- * aktywny materiał „gra” kilka sekund i wtedy liczy się jako obejrzany.
+ * Pojedynczy materiał w feedzie. Obsługuje formaty 9:16, 1:1 i 16:9:
+ * pionowe wypełnia ekran, pozostałe są wyśrodkowane na rozmytym tle.
+ * Odtwarzanie jest symulowane (brak plików wideo w demo).
  */
 function Reel({ video, tool, creatorName, position, active, watched, isLast, showSwipeHint, onComplete, onOpenTool, onOpenNotes, onNext }: ReelProps) {
   const [progress, setProgress] = useState(0);
   const [paused, setPaused] = useState(false);
   const finished = progress >= 100;
   const playing = active && !paused && !finished;
+  const vertical = video.format === "9:16";
 
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
@@ -49,7 +79,6 @@ function Reel({ video, tool, creatorName, position, active, watched, isLast, sho
     if (finished) onCompleteRef.current();
   }, [finished]);
 
-  // Po przewinięciu dalej materiał wraca do stanu wyjściowego.
   useEffect(() => {
     if (!active) setPaused(false);
   }, [active]);
@@ -67,19 +96,34 @@ function Reel({ video, tool, creatorName, position, active, watched, isLast, sho
   const railIcon = "inline-flex size-12 items-center justify-center rounded-full bg-white/15 backdrop-blur transition-colors hover:bg-white/25";
 
   return (
-    <section data-reel={video.id} className={cn("relative h-full snap-start snap-always overflow-hidden bg-linear-to-b text-white", video.poster)}>
-      <div className="bg-grid absolute inset-0 opacity-50" />
-      <div className="absolute -top-16 -right-16 size-72 rounded-full bg-white/15 blur-3xl" />
+    <section data-reel={video.id} className="relative h-full snap-start snap-always overflow-hidden bg-black text-white">
+      {/* Tło dla formatów innych niż pionowy */}
+      {!vertical && <div className={cn("absolute inset-0 scale-125 bg-linear-to-b opacity-40 blur-3xl", video.poster)} />}
+
+      {/* Kadr wideo w swoich proporcjach */}
+      <div
+        className={cn(
+          "absolute overflow-hidden bg-linear-to-b",
+          video.poster,
+          vertical ? "inset-0" : cn("inset-x-0 shadow-2xl", formatAspect[video.format], video.format === "1:1" ? "top-[16%]" : "top-[24%]"),
+        )}
+      >
+        <div className="bg-grid absolute inset-0 opacity-50" />
+        <div className="absolute -top-16 -right-16 size-72 rounded-full bg-white/15 blur-3xl" />
+        <span
+          className={cn(
+            "absolute top-1/2 left-1/2 inline-flex size-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/35 backdrop-blur transition-opacity duration-200",
+            playing ? "opacity-0" : "opacity-100",
+          )}
+        >
+          {finished ? <RotateCcw className="size-8" /> : <Play className="ml-1 size-8" fill="currentColor" />}
+        </span>
+      </div>
       <div className="absolute inset-x-0 bottom-0 h-2/3 bg-linear-to-t from-black/85 via-black/40 to-transparent" />
 
       {/* Cały ekran jest przyciskiem odtwórz / wstrzymaj */}
-      <button type="button" onClick={toggle} aria-label={finished ? "Odtwórz ponownie" : playing ? "Wstrzymaj" : "Odtwórz"} className="absolute inset-0 flex items-center justify-center">
-        <span className={cn("inline-flex size-20 items-center justify-center rounded-full bg-black/35 backdrop-blur transition-opacity duration-200", playing ? "opacity-0" : "opacity-100")}>
-          {finished ? <RotateCcw className="size-8" /> : <Play className="ml-1 size-8" fill="currentColor" />}
-        </span>
-      </button>
+      <button type="button" onClick={toggle} aria-label={finished ? "Odtwórz ponownie" : playing ? "Wstrzymaj" : "Odtwórz"} className="absolute inset-0" />
 
-      {/* Boczny pasek akcji */}
       <div className="absolute right-3 bottom-28 z-10 flex flex-col items-center gap-4">
         <button type="button" onClick={onOpenNotes} className={railButton}>
           <span className={railIcon}>
@@ -105,7 +149,6 @@ function Reel({ video, tool, creatorName, position, active, watched, isLast, sho
         )}
       </div>
 
-      {/* Opis materiału */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 pb-5">
         <div className="pr-16">
           <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
@@ -154,16 +197,66 @@ function Reel({ video, tool, creatorName, position, active, watched, isLast, sho
   );
 }
 
+/** Lista wideo — alternatywa dla feedu, włączana przełącznikiem w narożniku. */
+function VideoList({ videos, watched, onPick, toggle }: { videos: Video[]; watched: string[]; onPick: (id: string) => void; toggle: React.ReactNode }) {
+  return (
+    <div>
+      <div className="mb-5 flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold">Wideo</h1>
+          <p className="mt-1 text-sm text-ink-500">
+            Obejrzane: {watched.length} z {videos.length}. Najświeższe na górze.
+          </p>
+        </div>
+        {toggle}
+      </div>
+      <ul className="space-y-3">
+        {videos.map((v) => (
+          <li key={v.id}>
+            <button type="button" onClick={() => onPick(v.id)} className="flex w-full gap-3 rounded-2xl border border-line bg-white p-2.5 text-left">
+              {/* Miniatura zachowuje proporcje nagrania */}
+              <span className="flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-ink-900">
+                <span className={cn("relative block bg-linear-to-b", v.poster, formatAspect[v.format], v.format === "16:9" ? "w-full" : "h-full")}>
+                  <span className="absolute top-1/2 left-1/2 inline-flex size-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-ink-900">
+                    <Play className="ml-0.5 size-3" fill="currentColor" />
+                  </span>
+                </span>
+              </span>
+              <span className="min-w-0 flex-1 py-0.5">
+                <span className="block text-[11px] font-semibold tracking-wide text-violet-600 uppercase">{v.tag}</span>
+                <span className="line-clamp-2 text-sm leading-snug font-semibold">{v.title}</span>
+                <span className="mt-1.5 flex items-center gap-1.5 text-xs text-ink-400">
+                  {watched.includes(v.id) ? (
+                    <span className="inline-flex items-center gap-1 font-semibold text-volt-700">
+                      <Check className="size-3.5" strokeWidth={3} /> Obejrzane
+                    </span>
+                  ) : (
+                    <>{v.date}</>
+                  )}
+                  <span>· {v.duration}</span>
+                </span>
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 /**
- * Wideo: pionowy, pełnoekranowy feed materiałów jednego twórcy.
- * /app/wideo/:id otwiera feed od wskazanego materiału.
+ * Zakładka Wideo. Domyślnie pełnoekranowy feed (najświeższe na górze, przewinięcie w dół = kolejne),
+ * z przełącznikiem na listę. /app/wideo/:id otwiera feed od wskazanego materiału.
  */
 export default function UserVideosPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { channel, watched, markWatched } = useProgress();
-  const { openTool } = useAppUi();
-  const { videos, tools, creator } = channel;
+  const { openTool, videoView, setVideoView } = useAppUi();
+  const { tools, creator } = channel;
+  const videos = orderVideos(channel.videos);
 
+  const view: VideoView = id ? "feed" : videoView;
   const container = useRef<HTMLDivElement>(null);
   const startIndex = Math.max(0, videos.findIndex((v) => v.id === id));
   const [activeIndex, setActiveIndex] = useState(startIndex);
@@ -180,7 +273,7 @@ export default function UserVideosPage() {
     scrollToIndex(startIndex, false);
     setActiveIndex(startIndex);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, creator.slug]);
+  }, [id, creator.slug, view]);
 
   function onScroll() {
     const el = container.current;
@@ -190,6 +283,22 @@ export default function UserVideosPage() {
       setActiveIndex(index);
       setScrolled(true);
     }
+  }
+
+  function changeView(next: VideoView) {
+    setVideoView(next);
+    if (id) navigate("/app/wideo", { replace: true });
+  }
+
+  if (view === "list") {
+    return (
+      <VideoList
+        videos={videos}
+        watched={watched}
+        toggle={<ViewToggle view="list" onChange={changeView} tone="light" />}
+        onPick={(videoId) => navigate(`/app/wideo/${videoId}`)}
+      />
+    );
   }
 
   const notesTool = notes ? tools.find((t) => t.id === notes.toolId) : undefined;
@@ -217,6 +326,11 @@ export default function UserVideosPage() {
             />
           );
         })}
+      </div>
+
+      {/* Przełącznik widoku w prawym górnym narożniku, pod nagłówkiem kanału */}
+      <div className="absolute top-[calc(env(safe-area-inset-top)+4.5rem)] right-3 z-20">
+        <ViewToggle view="feed" onChange={changeView} tone="dark" />
       </div>
 
       <Sheet open={Boolean(notes)} onClose={() => setNotes(null)} title="Najważniejsze z tego impulsu">

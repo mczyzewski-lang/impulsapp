@@ -30,8 +30,12 @@ export const creator: Creator = {
   cadence: "Nowy impuls w każdy wtorek",
 };
 
+export type VideoFormat = "9:16" | "1:1" | "16:9";
+
 export interface Video {
   id: string;
+  /** Proporcje nagrania. Odtwarzacz dopasowuje się do każdej z nich. */
+  format: VideoFormat;
   title: string;
   description: string;
   duration: string;
@@ -46,6 +50,7 @@ export interface Video {
 export const videos: Video[] = [
   {
     id: "start",
+    format: "9:16",
     title: "Zacznij tutaj: jak wycisnąć najwięcej z tego kanału",
     description:
       "Dwie minuty o tym, co tu znajdziesz, jak często się odzywam i jak odblokować bezpośredni kontakt ze mną.",
@@ -62,6 +67,7 @@ export const videos: Video[] = [
   },
   {
     id: "pytanie-otwierajace",
+    format: "9:16",
     title: "Jedno pytanie, które otwiera rozmowę sprzedażową",
     description:
       "Zamiast prezentować ofertę, zacznij od pytania, po którym klient sam opowiada, czego potrzebuje.",
@@ -78,6 +84,7 @@ export const videos: Video[] = [
   },
   {
     id: "wycena",
+    format: "16:9",
     title: "Jak wycenić ofertę, żeby nie tłumaczyć się z ceny",
     description: "Trzy elementy wyceny, które sprawiają, że rozmowa o pieniądzach przestaje być niezręczna.",
     duration: "6:05",
@@ -93,6 +100,7 @@ export const videos: Video[] = [
   },
   {
     id: "follow-up",
+    format: "1:1",
     title: "Follow-up, który nie brzmi jak naganianie",
     description: "Jak wrócić do klienta po ciszy i dać mu powód, żeby odpisał.",
     duration: "3:48",
@@ -108,6 +116,7 @@ export const videos: Video[] = [
   },
   {
     id: "sygnaly-decyzji",
+    format: "9:16",
     title: "3 sygnały, że klient jest gotowy na decyzję",
     description: "Po czym poznać, że czas przestać przekonywać i po prostu zaproponować kolejny krok.",
     duration: "5:20",
@@ -264,6 +273,7 @@ const piotr: Channel = {
   videos: [
     {
       id: "start",
+      format: "9:16",
       title: "Zacznij tutaj: jak korzystać z tego kanału",
       description: "Półtorej minuty o tym, co i kiedy tu wysyłam.",
       duration: "1:40",
@@ -275,6 +285,7 @@ const piotr: Channel = {
     },
     {
       id: "poduszka",
+      format: "1:1",
       title: "Poduszka finansowa w firmie jednoosobowej",
       description: "Ile to „wystarczająco” i jak ją zbudować bez zaciskania pasa.",
       duration: "3:55",
@@ -286,6 +297,7 @@ const piotr: Channel = {
     },
     {
       id: "stawka",
+      format: "16:9",
       title: "Stawka godzinowa, która pokrywa urlop i chorobę",
       description: "Dlaczego etatowa pensja podzielona przez 168 to za mało.",
       duration: "4:10",
@@ -329,6 +341,11 @@ const piotr: Channel = {
     },
   ],
 };
+
+/** Kolejność w kanale: najświeższe na górze, wideo powitalne na końcu. */
+export function orderVideos(list: Video[]): Video[] {
+  return [...list.filter((v) => !v.isWelcome), ...list.filter((v) => v.isWelcome)];
+}
 
 export const channels: Channel[] = [
   { creator, videos, tools, files, weeklyQuestion, selectedQuestions },
@@ -471,3 +488,60 @@ export const emailSnippets = [
 ];
 
 export const nf = new Intl.NumberFormat("pl-PL", { useGrouping: "always" });
+
+/* ───────────── Strona zapisu twórcy ───────────── */
+
+export interface SignupPage {
+  headline: string;
+  lead: string;
+  bullets: string[];
+  buttonLabel: string;
+}
+
+/** Domyślna treść strony zapisu — twórca może ją zmienić w panelu. */
+export function defaultSignupPage(channel: Channel): SignupPage {
+  const bonus = channel.files.find((f) => f.isBonus);
+  return {
+    headline: bonus ? `Odbierz: ${bonus.title}` : `Dołącz do kanału ${channel.creator.channelName}`,
+    lead: channel.creator.promise,
+    bullets: [
+      "Prywatny materiał od razu po zapisie",
+      `${channel.creator.cadence} — krótkie wideo i narzędzie`,
+      "Dostęp do prywatnego kanału w Impulsie",
+    ],
+    buttonLabel: "Zapisz się i odbierz materiał",
+  };
+}
+
+export interface AutoEmail {
+  id: string;
+  when: string;
+  subject: string;
+  body: string;
+  cta: string;
+}
+
+/** Gotowe maile wysyłane przez Impuls do osób zapisanych przez stronę twórcy. */
+export const autoEmails: AutoEmail[] = [
+  {
+    id: "welcome",
+    when: "Od razu po zapisie",
+    subject: "Twój materiał czeka w Impulsie",
+    body: "Dzięki za zapis. Obiecany materiał i krótkie wideo powitalne są już w moim prywatnym kanale. Kliknij, żeby je odebrać.",
+    cta: "Odbierz materiał w Impulsie",
+  },
+  {
+    id: "reminder",
+    when: "Po 2 dniach, jeśli ktoś nie dołączył",
+    subject: "Materiał nadal na Ciebie czeka",
+    body: "Zostawiam link jeszcze raz. W kanale znajdziesz też checklistę, którą wdrożysz w kilka minut.",
+    cta: "Wejdź do kanału",
+  },
+  {
+    id: "impulse",
+    when: "Przy każdym nowym impulsie",
+    subject: "Nowy impuls: {tytuł impulsu}",
+    body: "Krótka zapowiedź tego, co jest w tym tygodniu w kanale. Tu jest więcej materiału: pełne wideo i narzędzie do wdrożenia.",
+    cta: "Zobacz impuls w kanale",
+  },
+];

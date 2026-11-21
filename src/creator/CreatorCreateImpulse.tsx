@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Bell, CheckCircle2, CheckSquare, FileUp, Film, Link2, Plus, Trash2, Zap } from "lucide-react";
-import { creator } from "@/data/mock";
+import { creator, type VideoFormat } from "@/data/mock";
+import { formatAspect, formatLabel } from "@/lib/videoFormat";
 import { channelPath } from "@/config";
 import { cn } from "@/lib/cn";
 import { Button, buttonClass } from "@/components/ui/Button";
@@ -36,6 +37,7 @@ export default function CreatorCreateImpulse() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [video, setVideo] = useState<string | null>(null);
+  const [format, setFormat] = useState<VideoFormat>("9:16");
   const [file, setFile] = useState<string | null>(null);
   const [withTool, setWithTool] = useState(true);
   const [toolTitle, setToolTitle] = useState("");
@@ -108,8 +110,32 @@ export default function CreatorCreateImpulse() {
 
           <Card className="p-5">
             <h2 className="text-lg font-bold">2. Wideo</h2>
-            <p className="mt-1 mb-4 text-sm text-ink-500">Najlepiej działają materiały 3–6 minut nagrane telefonem.</p>
+            <p className="mt-1 mb-4 text-sm text-ink-500">Najlepiej działają materiały 3–6 minut nagrane telefonem. Przyjmujemy wideo pionowe, kwadratowe i poziome.</p>
             <Dropzone icon={Film} title="Dodaj wideo" hint="MP4 lub MOV, do 2 GB" filled={video} onFill={() => setVideo("impuls-13.mp4 · 4:48")} />
+            <div className="mt-4">
+              <p className={labelClass}>Format</p>
+              <div className="mt-1.5 grid grid-cols-3 gap-2" role="radiogroup" aria-label="Format wideo">
+                {(Object.keys(formatLabel) as VideoFormat[]).map((f) => (
+                  <button
+                    key={f}
+                    type="button"
+                    role="radio"
+                    aria-checked={format === f}
+                    onClick={() => setFormat(f)}
+                    className={cn("flex items-center gap-3 rounded-xl border p-3 text-left transition", format === f ? "border-ink-900 bg-ink-900 text-white" : "border-line bg-white hover:border-ink-300")}
+                  >
+                    <span className="flex size-8 shrink-0 items-center justify-center">
+                      <span className={cn("block rounded-[3px] border-2 border-current", formatAspect[f], f === "16:9" ? "w-full" : "h-full")} />
+                    </span>
+                    <span>
+                      <span className="block text-sm font-semibold">{f}</span>
+                      <span className={cn("block text-xs", format === f ? "text-ink-300" : "text-ink-500")}>{formatLabel[f]}</span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+              <p className="mt-2 text-xs text-ink-400">Format rozpoznamy z pliku. W feedzie odbiorcy pionowe wideo wypełnia ekran, pozostałe są wyśrodkowane.</p>
+            </div>
           </Card>
 
           <Card className="p-5">
@@ -184,7 +210,7 @@ export default function CreatorCreateImpulse() {
         <div className="lg:sticky lg:top-8 lg:self-start">
           <p className="mb-2 text-xs font-semibold tracking-wide text-ink-400 uppercase">Podgląd u odbiorcy</p>
           <div className="rounded-[2rem] border border-line bg-white p-3 shadow-sm">
-            <div className={cn("relative flex aspect-video items-center justify-center rounded-2xl", video ? "bg-linear-to-br from-violet-600 to-ink-900 text-white" : "bg-paper text-ink-300")}>
+            <div className={cn("relative mx-auto flex items-center justify-center rounded-2xl", formatAspect[format], format === "9:16" && "max-h-80", video ? "bg-linear-to-br from-violet-600 to-ink-900 text-white" : "bg-paper text-ink-300")}>
               <Film className="size-7" />
             </div>
             <div className="px-1.5 pt-3 pb-1.5">

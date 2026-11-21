@@ -76,7 +76,7 @@ export default function UserChatUnlockPage() {
                   rows={3}
                   aria-label="Twoja odpowiedź"
                   placeholder="Napisz jednym, dwoma zdaniami…"
-                  className="mt-3 w-full resize-none rounded-xl border border-line bg-white p-3 text-[15px] outline-none focus:border-ink-900"
+                  className="mt-3 w-full resize-none rounded-xl border border-line bg-white p-3 text-base outline-none focus:border-ink-900"
                 />
                 <p className="mt-1.5 text-xs text-ink-400">{weeklyQuestion.context}</p>
                 <Button type="submit" variant="dark" className="mt-3 w-full" disabled={!draft.trim()}>

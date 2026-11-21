@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Check, CheckSquare, ChevronRight, Gift, MessageCircleQuestion, Play } from "lucide-react";
+import { orderVideos, type VideoFormat } from "@/data/mock";
 import { useProgress } from "@/state/progress";
 import { cn } from "@/lib/cn";
 import { Badge } from "@/components/ui/Badge";
@@ -19,16 +20,23 @@ function ReelCover({ poster, className, children }: { poster: string; className?
   );
 }
 
+/** Okładka impulsu tygodnia: pionowe wideo przycinamy do 4:5, pozostałe pokazujemy w całości. */
+const coverAspect: Record<VideoFormat, string> = {
+  "9:16": "aspect-[4/5]",
+  "1:1": "aspect-square",
+  "16:9": "aspect-video",
+};
+
 export default function UserChannelHome() {
   const { name, channel, watched, downloaded, answer } = useProgress();
   const { openTool } = useAppUi();
   const { creator, videos, tools, files, weeklyQuestion } = channel;
 
-  const welcome = videos[0];
-  const latest = videos[1] ?? welcome;
+  const ordered = orderVideos(videos);
+  const latest = ordered[0];
   const latestTool = tools.find((t) => t.id === latest.toolId);
   const bonus = files.find((f) => f.isBonus);
-  const earlier = videos.filter((v) => v.id !== latest.id);
+  const earlier = ordered.slice(1);
 
   return (
     <div className="space-y-6">
@@ -39,7 +47,7 @@ export default function UserChannelHome() {
 
       <Card className="overflow-hidden">
         <Link to={`/app/wideo/${latest.id}`} className="block p-2.5">
-          <ReelCover poster={latest.poster} className="aspect-[4/5]">
+          <ReelCover poster={latest.poster} className={coverAspect[latest.format]}>
             <span className="absolute top-1/2 left-1/2 inline-flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-ink-900 shadow-xl">
               <Play className="ml-1 size-6" fill="currentColor" />
             </span>

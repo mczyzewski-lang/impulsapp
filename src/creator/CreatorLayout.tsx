@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import {
-  BarChart3, ExternalLink, FolderOpen, LayoutDashboard, Link2, Menu, MessagesSquare, Plus, Radio, Settings, Trophy, Users, X,
+  BarChart3, ExternalLink, FolderOpen, LayoutDashboard, Link2, Menu, MessagesSquare, PanelTop, Plus, Radio, Settings, Trophy, Users, X,
 } from "lucide-react";
 import { creator } from "@/data/mock";
 import { cn } from "@/lib/cn";
@@ -17,6 +17,7 @@ const nav = [
   { to: "/studio/ambasadorzy", label: "Ambasadorzy", icon: Trophy },
   { to: "/studio/interakcje", label: "Czat i interakcje", icon: MessagesSquare, badge: 3 },
   { to: "/studio/analityka", label: "Analityka", icon: BarChart3 },
+  { to: "/studio/strona", label: "Strona zapisu", icon: PanelTop },
   { to: "/studio/linki", label: "Linki i kampanie", icon: Link2 },
   { to: "/studio/ustawienia", label: "Ustawienia", icon: Settings },
 ];
@@ -127,5 +128,5 @@ export function PageHeader({ title, lead, action }: { title: string; lead?: stri
 
 /** Wspólne style pól formularza w panelu. */
 export const inputClass =
-  "mt-1.5 w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-[15px] font-normal text-ink-900 outline-none placeholder:text-ink-400 focus:border-ink-900";
+  "mt-1.5 w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-base font-normal sm:text-[15px] text-ink-900 outline-none placeholder:text-ink-400 focus:border-ink-900";
 export const labelClass = "block text-sm font-semibold text-ink-900";

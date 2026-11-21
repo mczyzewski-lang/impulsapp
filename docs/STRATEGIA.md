@@ -16,6 +16,10 @@ Impuls to miejsce, do którego najbardziej zaangażowani „awansują” z listy
    Postęp jest widoczny na starcie kanału, pod każdym wideo i w zakładce Czat. Po odblokowaniu to nadal nie messenger:
    jedna wiadomość na impuls, pytania twórcy, wybrane pytania publikowane dla wszystkich.
 
+**Dwie drogi do kanału.** Twórca z własną listą wkleja link do kanału w swoje maile. Twórca bez listy (albo chcący ją
+powiększyć) udostępnia stronę zapisu w Impulsie (`impuls.app/s/<twórca>`): zapisana osoba dostaje gotowe maile z linkiem
+do kanału i krótkie zapowiedzi nowych impulsów („tu jest więcej materiału”). W obu przypadkach email dociera, a Impuls aktywuje.
+
 **Dwie grupy, dwa hasła:**
 
 - Odbiorca: „Impulsy do działania od ludzi, którym ufasz.”
@@ -76,6 +80,7 @@ Link w mailu
 | Ambasadorzy | Najbardziej zaangażowani, szybkie akcje, lista „blisko awansu” |
 | Czat i interakcje | Aktualne pytanie, odpowiedzi (wyróżnianie), wiadomości (odpowiedz prywatnie / opublikuj), insighty |
 | Analityka | Wskaźniki przejścia, aktywni w czasie, odblokowania, lejek, skuteczność impulsów |
+| Strona zapisu | Własny landing twórcy: edycja treści z podglądem na żywo, adres do udostępnienia, trzy automatyczne maile, statystyki zapisów |
 | Linki i kampanie | Generator linku do prywatnego materiału, gotowe CTA do maila, wyniki kampanii |
 | Ustawienia | Profil twórcy, powiadomienia |
 

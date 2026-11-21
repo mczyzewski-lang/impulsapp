@@ -24,10 +24,11 @@ npm run build
 | Trasa | Widok |
 | --- | --- |
 | `/` | `LandingPage` |
+| `/s/:slug` | `PublicSignupPage` — publiczna strona zapisu twórcy; po zapisie podgląd maila z linkiem do kanału |
 | `/k/:slug` | `CreatorInvitePage` — zaproszenie do kanału (wejście z linku twórcy) |
 | `/app/start` | `OnboardingPage` — konto → wideo powitalne → zasady odblokowania czatu |
 | `/app` | `UserChannelHome` |
-| `/app/wideo`, `/app/wideo/:id` | `UserVideosPage` — pionowy, pełnoekranowy feed wideo (`:id` otwiera feed od wskazanego materiału) |
+| `/app/wideo`, `/app/wideo/:id` | `UserVideosPage` — pełnoekranowy feed (najświeższe na górze) z przełącznikiem na listę; `:id` otwiera feed od wskazanego materiału |
 | `/app/narzedzia`, `/app/narzedzia/:id` | `UserToolsPage`; narzędzie otwiera się w arkuszu `ToolSheet` nad bieżącym ekranem |
 | `/app/pliki` | `UserFilesPage` |
 | `/app/czat` | `UserChatUnlockPage` lub `UserChatPage` (zależnie od aktywności) |
@@ -39,6 +40,7 @@ npm run build
 | `/studio/odbiorcy`, `/studio/ambasadorzy` | `CreatorAudience`, `CreatorAmbassadors` |
 | `/studio/interakcje` | `CreatorInteractions` |
 | `/studio/analityka` | `CreatorAnalytics` |
+| `/studio/strona` | `CreatorSignupPage` — edytor strony zapisu i automatycznych maili |
 | `/studio/linki` | `CreatorLinks` |
 | `/studio/ustawienia` | `CreatorSettings` |
 
@@ -68,6 +70,9 @@ Tokeny designu (kolory `ink-*`, `volt-*`, fonty) są w `src/index.css` w bloku `
 ## Co jest mockiem
 
 - Wideo jest symulowane: aktywny materiał w feedzie „gra” 5 sekund i wtedy liczy się jako obejrzany.
+  Dopuszczalne formaty to 9:16, 1:1 i 16:9 (`Video.format`); pionowe wypełnia ekran, pozostałe są wyśrodkowane na rozmytym tle.
+- Strona zapisu nie wysyła maili — po zapisie pokazuje podgląd wiadomości. Treść strony edytowana w panelu zapisuje się w `localStorage`.
+- Awatary twórców to ilustracje SVG (`components/ui/Avatar.tsx`); docelowo zastąpi je zdjęcie wgrane przez twórcę.
 - Pobieranie narzędzi/plików, upload w kreatorze impulsu, zapisy ustawień i wysyłka wiadomości zmieniają tylko stan lokalny.
 - Liczby w panelu twórcy oraz persona „Marta Zielińska” są fikcyjne.
 
@@ -79,8 +84,19 @@ inaczej bezpośrednie wejście na `/k/...` z maila zwróci 404.
 
 ## Capacitor (iOS / Android)
 
-Projekt jest przygotowany pod Capacitor: `capacitor.config.ts` (`webDir: dist`), `viewport-fit=cover`,
-utilities `pt-safe` / `pb-safe` dla notcha i paska gestów, brak zależności od hovera, routing po stronie klienta.
+Co jest przygotowane:
+
+- `capacitor.config.ts` (`webDir: dist`, `appId: app.impuls.mobile`), zależności `@capacitor/core`, `ios`, `android`, `app`;
+- `src/native/NativeBridge.tsx`: link `https://impuls.app/...` otwarty na telefonie prowadzi do właściwego ekranu,
+  a systemowy „wstecz” na Androidzie cofa w historii zamiast zamykać aplikację;
+- w aplikacji natywnej trasa `/` od razu przechodzi do `/app` (bez strony marketingowej);
+- stała powłoka aplikacji (`h-dvh`, przewija się tylko treść), `viewport-fit=cover` i utilities `pt-safe` / `pb-safe`;
+- pola formularzy mają 16 px na telefonie, więc iOS nie przybliża ekranu przy wpisywaniu;
+- fonty i wszystkie zasoby są w paczce — aplikacja nie pobiera nic z zewnętrznych serwerów.
+
+Sprawdzone: `npx cap add android`, `npx cap add ios` i `npx cap sync` przechodzą na tym repo (zasoby webowe i wtyczka
+`@capacitor/app` trafiają do obu projektów). Kompilacja natywna nie była uruchamiana — wymaga Xcode i Android Studio.
+
 Natywne projekty nie są w repo — generuje się je lokalnie (iOS wymaga macOS + Xcode, Android — Android Studio):
 
 ```bash
@@ -106,5 +122,6 @@ Przed publikacją w sklepach:
   na serwerze `impuls.app` muszą być dostępne `/.well-known/apple-app-site-association` (iOS)
   i `/.well-known/assetlinks.json` (Android), a w projektach natywnych — Associated Domains `applinks:impuls.app`
   oraz intent-filter z `android:autoVerify="true"`,
-- dodaj `@capacitor/push-notifications` (nowe impulsy) i `@capacitor/app` (obsługa deep linków i przycisku wstecz),
-- w aplikacji natywnej ustaw trasę startową na `/app` zamiast landing page.
+- dodaj `@capacitor/push-notifications` (nowe impulsy),
+- przenieś stan z `localStorage` do `@capacitor/preferences` lub na backend — iOS może czyścić `localStorage` przy braku miejsca,
+- przygotuj ikonę i splash screen (`@capacitor/assets`).

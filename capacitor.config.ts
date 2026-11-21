@@ -7,6 +7,7 @@ const config: CapacitorConfig = {
   webDir: "dist",
   backgroundColor: "#0B1020",
   ios: { contentInset: "never" },
+  android: { allowMixedContent: false },
 };
 
 export default config;
