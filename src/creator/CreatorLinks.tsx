@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link2, Mail } from "lucide-react";
 import { campaigns, creator, emailSnippets, nf, tools, videos } from "@/data/mock";
+import { channelPath } from "@/config";
 import { Card } from "@/components/ui/Card";
 import { CopyButton } from "@/components/ui/CopyButton";
 import { PageHeader, inputClass, labelClass } from "./CreatorLayout";
@@ -28,7 +29,7 @@ export default function CreatorLinks() {
 
   const path = material === "kanal" ? "" : `/${material}`;
   const source = slugify(campaign);
-  const url = `https://impuls.app/k/${creator.slug}${path}${source ? `?z=${source}` : ""}`;
+  const url = `https://${channelPath(creator.slug)}${path}${source ? `?z=${source}` : ""}`;
 
   return (
     <div>

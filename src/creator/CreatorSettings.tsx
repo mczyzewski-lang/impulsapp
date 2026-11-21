@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { creator } from "@/data/mock";
+import { channelPath } from "@/config";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -38,7 +39,7 @@ export default function CreatorSettings() {
             </label>
             <label className={labelClass}>
               Adres kanału
-              <input className={inputClass} defaultValue={`impuls.app/k/${creator.slug}`} />
+              <input className={inputClass} defaultValue={channelPath(creator.slug)} />
             </label>
             <label className={`${labelClass} sm:col-span-2`}>
               Czym się zajmujesz

@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Bell, CheckCircle2, CheckSquare, FileUp, Film, Link2, Plus, Trash2, Zap } from "lucide-react";
 import { creator } from "@/data/mock";
+import { channelPath } from "@/config";
 import { cn } from "@/lib/cn";
 import { Button, buttonClass } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -44,7 +45,7 @@ export default function CreatorCreateImpulse() {
   const [notify, setNotify] = useState(true);
   const [published, setPublished] = useState(false);
 
-  const link = `impuls.app/k/${creator.slug}/nowy-impuls`;
+  const link = `${channelPath(creator.slug)}/nowy-impuls`;
   const filledItems = items.filter((i) => i.trim());
 
   function publish(e: FormEvent) {

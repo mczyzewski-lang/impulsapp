@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  // TODO: podmień na docelowy bundle identifier przed publikacją w sklepach.
+  // Odwrócona domena impuls.app. Po pierwszej publikacji w sklepach nie da się go zmienić.
   appId: "app.impuls.mobile",
   appName: "Impuls",
   webDir: "dist",

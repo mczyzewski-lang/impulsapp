@@ -65,6 +65,12 @@ Tokeny designu (kolory `ink-*`, `volt-*`, fonty) są w `src/index.css` w bloku `
 - Pobieranie narzędzi/plików, upload w kreatorze impulsu, zapisy ustawień i wysyłka wiadomości zmieniają tylko stan lokalny.
 - Liczby w panelu twórcy oraz persona „Marta Zielińska” są fikcyjne.
 
+## Domena
+
+Strona i aplikacja webowa działają pod **impuls.app** (stała w `src/config.ts`). Linki do kanałów mają postać
+`https://impuls.app/k/<twórca>`. Hosting musi przekierowywać nieznane ścieżki na `index.html` (routing po stronie klienta),
+inaczej bezpośrednie wejście na `/k/...` z maila zwróci 404.
+
 ## Capacitor (iOS / Android)
 
 Projekt jest przygotowany pod Capacitor: `capacitor.config.ts` (`webDir: dist`), `viewport-fit=cover`,
@@ -89,7 +95,10 @@ npm run cap:android
 
 Przed publikacją w sklepach:
 
-- podmień `appId` w `capacitor.config.ts` na docelowy bundle identifier,
-- skonfiguruj Universal Links / App Links dla `/k/:slug`, żeby link z maila otwierał kanał w aplikacji,
+- potwierdź `appId` w `capacitor.config.ts` (`app.impuls.mobile`) — po pierwszej publikacji nie da się go zmienić,
+- skonfiguruj Universal Links / App Links dla `https://impuls.app/k/*`, żeby link z maila otwierał kanał w aplikacji:
+  na serwerze `impuls.app` muszą być dostępne `/.well-known/apple-app-site-association` (iOS)
+  i `/.well-known/assetlinks.json` (Android), a w projektach natywnych — Associated Domains `applinks:impuls.app`
+  oraz intent-filter z `android:autoVerify="true"`,
 - dodaj `@capacitor/push-notifications` (nowe impulsy) i `@capacitor/app` (obsługa deep linków i przycisku wstecz),
 - w aplikacji natywnej ustaw trasę startową na `/app` zamiast landing page.
