@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowRight, Check, Inbox, Lock, Mail, X, Zap } from "lucide-react";
-import { SOCIAL_PROOF_MIN, autoEmails, channelBySlug, type Creator, type SignupPage } from "@/data/mock";
-import { APP_DOMAIN } from "@/config";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
+import { ArrowRight, Check, Lock, X, Zap } from "lucide-react";
+import { SOCIAL_PROOF_MIN, channelBySlug, type Creator, type SignupPage } from "@/data/mock";
 import { useSignupPage } from "@/state/signupPage";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button, buttonClass } from "@/components/ui/Button";
@@ -59,9 +59,19 @@ export function SignupCard({ creator, page, onSubmit }: { creator: Creator; page
   );
 }
 
+/** Przejście „jak w quizie”: bieżący ekran wyjeżdża w lewo, kolejny wjeżdża z prawej. */
+export const slide = {
+  initial: { x: 80, opacity: 0 },
+  animate: { x: 0, opacity: 1 },
+  exit: { x: -80, opacity: 0 },
+  transition: { duration: 0.28, ease: "easeOut" },
+} as const;
+
+const stages = ["Zapis", "Rozszerzenie", "Kanał"];
+
 /**
  * Publiczna strona zapisu twórcy (/s/:slug).
- * Zapis → mail od Impulsu z linkiem → prywatny kanał.
+ * Krok 1: zapis na maile → krok 2: bezpłatne rozszerzenie o kanał → krok 3: zaproszenie do kanału.
  */
 export default function PublicSignupPage() {
   const { slug } = useParams();
@@ -69,7 +79,8 @@ export default function PublicSignupPage() {
   const { creator } = channel;
   const [page] = useSignupPage(channel);
   const [email, setEmail] = useState<string | null>(null);
-  const welcome = autoEmails[0];
+  const step = email === null ? 0 : 1;
+
   const access = [
     { label: "Newsletter: impulsy e-mailem", included: true },
     { label: "Wideo", included: false },
@@ -79,79 +90,91 @@ export default function PublicSignupPage() {
   ];
 
   return (
-    <div className="relative min-h-dvh overflow-hidden bg-ink-900 text-white">
-      <div className="bg-grid absolute inset-0" />
-      <div className="absolute -top-32 left-1/2 h-[420px] w-[640px] -translate-x-1/2 rounded-full bg-violet-600/30 blur-[110px]" />
+    <MotionConfig reducedMotion="user">
+      <div className="relative min-h-dvh overflow-hidden bg-ink-900 text-white">
+        <div className="bg-grid absolute inset-0" />
+        <div className="absolute -top-32 left-1/2 h-[420px] w-[640px] -translate-x-1/2 rounded-full bg-violet-600/30 blur-[110px]" />
 
-      <div className="pt-safe pb-safe relative mx-auto flex min-h-dvh max-w-2xl flex-col px-5">
-        <header className="flex items-center justify-between py-5">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1 text-xs font-medium text-ink-300">
-            <Lock className="size-3" /> {creator.channelName}
-          </span>
-          <Link to="/" className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-400 hover:text-white">
-            <Zap className="size-3.5 text-volt-400" fill="currentColor" strokeWidth={0} /> Strona w Impulsie
-          </Link>
-        </header>
-
-        <main className="flex flex-1 flex-col justify-center py-8">
-          {email === null ? (
-            <SignupCard creator={creator} page={page} onSubmit={setEmail} />
-          ) : (
-            <div className="text-center">
-              <span className="inline-flex size-16 items-center justify-center rounded-2xl bg-volt-400 text-ink-950">
-                <Inbox className="size-7" />
+        <div className="pt-safe pb-safe relative mx-auto flex min-h-dvh max-w-2xl flex-col px-5">
+          <header className="py-5">
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1 text-xs font-medium text-ink-300">
+                <Lock className="size-3" /> {creator.channelName}
               </span>
-              <h1 className="mt-5 text-3xl font-extrabold">Sprawdź skrzynkę</h1>
-              <p className="mx-auto mt-2 max-w-sm text-ink-300">
-                Na adres <span className="font-semibold text-white">{email}</span> wysłaliśmy maila z linkiem do materiału.
-              </p>
-
-              {/* Podgląd maila, który dostaje zapisana osoba */}
-              <div className="mx-auto mt-8 max-w-md rounded-3xl bg-white p-5 text-left text-ink-900 shadow-2xl">
-                <p className="flex items-center gap-2 text-xs font-semibold text-ink-400">
-                  <Mail className="size-3.5" /> Tak wygląda mail (podgląd demo)
-                </p>
-                <div className="mt-3 flex items-center gap-3 border-b border-line pb-3">
-                  <Avatar name={creator.name} />
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold">{creator.name}</p>
-                    <p className="truncate text-xs text-ink-400">przez Impuls · {APP_DOMAIN}</p>
-                  </div>
-                </div>
-                <p className="mt-3 font-display text-lg font-bold">{welcome.subject}</p>
-                <p className="mt-1.5 text-[15px] text-ink-600">{welcome.body}</p>
-
-                {/* Co już masz, a co czeka w kanale */}
-                <ul className="mt-4 divide-y divide-line rounded-2xl border border-line text-[15px]">
-                  {access.map(({ label, included }) => (
-                    <li key={label} className="flex items-center gap-3 px-3.5 py-2">
-                      <span
-                        className={
-                          included
-                            ? "inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-volt-400 text-ink-950"
-                            : "inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-ink-900/8 text-ink-400"
-                        }
-                      >
-                        {included ? <Check className="size-3.5" strokeWidth={3} /> : <X className="size-3.5" strokeWidth={3} />}
-                      </span>
-                      <span className={included ? "font-semibold" : "text-ink-500"}>{label}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <Link to={`/k/${creator.slug}`} className={buttonClass("primary", "lg", "mt-4 w-full")}>
-                  Rozszerz bezpłatnie o impulsy <ArrowRight className="size-5" />
-                </Link>
-                {creator.members > SOCIAL_PROOF_MIN && (
-                  <p className="mt-3 text-center text-sm text-ink-500">
-                    Dołącz do <span className="font-semibold text-ink-900">{creator.members} osób</span> w kanale
-                  </p>
-                )}
-              </div>
+              <Link to="/" className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-400 hover:text-white">
+                <Zap className="size-3.5 text-volt-400" fill="currentColor" strokeWidth={0} /> Strona w Impulsie
+              </Link>
             </div>
-          )}
-        </main>
+
+            {/* Pasek etapów — widać, że to droga do przodu, a nie koniec */}
+            <ol className="mx-auto mt-6 flex max-w-sm gap-2" aria-label={`Krok ${step + 1} z ${stages.length}`}>
+              {stages.map((label, i) => (
+                <li key={label} className="flex-1">
+                  <span className="block h-1.5 overflow-hidden rounded-full bg-white/15">
+                    <motion.span className="block h-full rounded-full bg-volt-400" initial={false} animate={{ width: i <= step ? "100%" : "0%" }} transition={{ duration: 0.35 }} />
+                  </span>
+                  <span className={`mt-1.5 block text-center text-[11px] font-semibold ${i <= step ? "text-white" : "text-ink-400"}`}>{label}</span>
+                </li>
+              ))}
+            </ol>
+          </header>
+
+          <main className="flex flex-1 flex-col justify-center py-6">
+            <AnimatePresence mode="wait" initial={false}>
+              {email === null ? (
+                <motion.div key="signup" {...slide}>
+                  <SignupCard creator={creator} page={page} onSubmit={setEmail} />
+                </motion.div>
+              ) : (
+                <motion.div key="upgrade" {...slide} className="text-center">
+                  <p className="mx-auto inline-flex max-w-full items-center gap-2 rounded-full bg-white/10 px-3.5 py-2 text-sm">
+                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-volt-400 text-ink-950">
+                      <Check className="size-3.5" strokeWidth={3} />
+                    </span>
+                    <span className="truncate">
+                      Zapisano. Link wysłaliśmy na <span className="font-semibold">{email}</span>
+                    </span>
+                  </p>
+                  <h1 className="mx-auto mt-5 max-w-md text-3xl leading-[1.1] font-extrabold text-balance sm:text-[2.6rem]">
+                    Maile już masz. Odbierz resztę.
+                  </h1>
+                  <p className="mx-auto mt-3 max-w-sm text-ink-300">
+                    W kanale {creator.firstNameGen} czeka wszystko, czego nie da się zmieścić w mailu.
+                  </p>
+
+                  <div className="mx-auto mt-7 max-w-sm rounded-3xl bg-white p-4 text-left text-ink-900 shadow-2xl">
+                    <ul className="divide-y divide-line rounded-2xl border border-line text-[15px]">
+                      {access.map(({ label, included }) => (
+                        <li key={label} className="flex items-center gap-3 px-3.5 py-2.5">
+                          <span
+                            className={
+                              included
+                                ? "inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-volt-400 text-ink-950"
+                                : "inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-ink-900/8 text-ink-400"
+                            }
+                          >
+                            {included ? <Check className="size-3.5" strokeWidth={3} /> : <X className="size-3.5" strokeWidth={3} />}
+                          </span>
+                          <span className={included ? "font-semibold" : "text-ink-500"}>{label}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Link to={`/k/${creator.slug}`} className={buttonClass("primary", "lg", "mt-4 w-full")}>
+                      Rozszerz bezpłatnie o impulsy <ArrowRight className="size-5" />
+                    </Link>
+                    {creator.members > SOCIAL_PROOF_MIN && (
+                      <p className="mt-3 text-center text-sm text-ink-500">
+                        Dołącz do <span className="font-semibold text-ink-900">{creator.members} osób</span> w kanale
+                      </p>
+                    )}
+                  </div>
+                  <p className="mx-auto mt-5 max-w-xs text-xs text-ink-400">Wolisz później? Ten sam link znajdziesz w mailu.</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </main>
+        </div>
       </div>
-    </div>
+    </MotionConfig>
   );
 }

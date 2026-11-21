@@ -1,9 +1,11 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Check, Zap } from "lucide-react";
 import { SOCIAL_PROOF_MIN, channelBySlug, type Creator, type SignupPage } from "@/data/mock";
 import { useSignupPage } from "@/state/signupPage";
 import { cn } from "@/lib/cn";
+import { slide } from "./PublicSignupPage";
 
 export interface EmbedOptions {
   theme: "dark" | "light";
@@ -25,9 +27,10 @@ export function EmbedForm({ creator, page, options, interactive = true }: { crea
   }
 
   return (
-    <div className={cn("rounded-3xl border p-5", dark ? "border-white/10 bg-ink-900 text-white" : "border-line bg-white text-ink-900")}>
+    <div className={cn("overflow-hidden rounded-3xl border p-5", dark ? "border-white/10 bg-ink-900 text-white" : "border-line bg-white text-ink-900")}>
+      <AnimatePresence mode="wait" initial={false}>
       {done ? (
-        <div className="text-center">
+        <motion.div key="done" {...slide} className="text-center">
           <span className="inline-flex size-11 items-center justify-center rounded-full bg-volt-400 text-ink-950">
             <Check className="size-5" strokeWidth={3} />
           </span>
@@ -43,9 +46,9 @@ export function EmbedForm({ creator, page, options, interactive = true }: { crea
           >
             Rozszerz bezpłatnie o impulsy <ArrowRight className="size-4.5" />
           </a>
-        </div>
+        </motion.div>
       ) : (
-        <form onSubmit={submit}>
+        <motion.form key="form" {...slide} onSubmit={submit}>
           {options.showHeadline && (
             <>
               <p className="font-display text-xl leading-tight font-bold text-balance">{page.headline}</p>
@@ -81,8 +84,9 @@ export function EmbedForm({ creator, page, options, interactive = true }: { crea
               <Zap className="size-3 text-volt-500" fill="currentColor" strokeWidth={0} /> Impuls
             </span>
           </div>
-        </form>
+        </motion.form>
       )}
+      </AnimatePresence>
     </div>
   );
 }
