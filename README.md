@@ -41,6 +41,8 @@ npm run build
 | `/studio/materialy` | `CreatorMaterials` |
 | `/studio/nagraj` | `CreatorRecorder` — nagrywanie z kamery z prompterem (hook + treść / pytanie + treść) |
 | `/studio/montaz/:id` | `CreatorVideoStudio` — studio wideo: przycinanie, napisy, infografiki w stylu marki |
+| `/studio/publikacja/:id` | `CreatorPublish` — gdzie i kiedy opublikować zmontowane wideo (kanał Impulsu, social media) |
+| `/studio/kalendarz` | `CreatorCalendar` — plan publikacji i podpięte konta social |
 | `/studio/odbiorcy`, `/studio/ambasadorzy` | `CreatorAudience`, `CreatorAmbassadors` |
 | `/studio/interakcje` | `CreatorInteractions` |
 | `/studio/analityka` | `CreatorAnalytics` |
@@ -86,6 +88,9 @@ Integracje działają przez serwer pośredniczący `server/index.mjs` (klucze AP
 | `POST /api/tts` | ElevenLabs Text to Speech | lektor czytający pytanie w prompterze |
 | `POST /api/transcribe` | ElevenLabs Speech to Text | napisy z nagrania |
 | `POST /api/infographic` | OpenAI Images | infografiki w stylu marki |
+| `POST /api/social/connect` | Upload-Post | tworzy profil twórcy i zwraca jednorazowy link do podpięcia kont |
+| `GET /api/social/accounts` | Upload-Post | lista kont podpiętych przez twórcę |
+| `POST /api/social/publish` | Upload-Post | publikacja albo zaplanowanie wideo (`scheduled_date`) |
 | `GET /api/health` | — | informuje frontend, które integracje są włączone |
 
 ```bash
@@ -117,7 +122,18 @@ zmienna `ADMIN_PASSWORD` — to hasło logowania.
 | --- | --- |
 | `ADMIN_PASSWORD` | hasło do `/admin`; bez niego panel jest wyłączony |
 | `DATA_DIR` | katalog na ustawienia i dziennik (domyślnie `./data`). Na hostingu z ulotnym dyskiem (np. Railway) podłącz trwały wolumen i wskaż go tutaj — inaczej klucze i dziennik znikną przy każdym wdrożeniu |
-| `ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID`, `OPENAI_API_KEY`, `OPENAI_IMAGE_MODEL` | alternatywa dla panelu; wartość wpisana w panelu ma pierwszeństwo |
+| `ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID`, `OPENAI_API_KEY`, `OPENAI_IMAGE_MODEL`, `UPLOADPOST_API_KEY` | alternatywa dla panelu; wartość wpisana w panelu ma pierwszeństwo |
+
+### Publikacja w social mediach
+
+Model: Impuls ma jeden klucz API u dostawcy (Upload-Post, wpisywany w `/admin`), a każdy twórca dostaje u niego własny
+profil. Konta podpina na stronie dostawcy otwieranej jednorazowym linkiem, więc Impuls nie przechowuje haseł ani tokenów
+do platform. Dostawca jest schowany za `server/index.mjs` i `src/state/publishing.ts` — da się go wymienić bez zmian w ekranach.
+
+Bez klucza działa tryb demo: konta podpinają się lokalnie, a publikacje trafiają tylko do kalendarza. Wywołania do
+Upload-Post nie były testowane na żywym kluczu; ścieżki zarządzania profilami (`/uploadposts/users`, `generate-jwt`)
+są wzięte z dokumentacji SDK i trzeba je potwierdzić przy pierwszym uruchomieniu. Publikacja w kanale Impulsu oraz sam
+kalendarz są w tym prototypie zapisem lokalnym.
 
 Ograniczenia: jest jedno hasło administratora (bez kont użytkowników), a endpointy AI są publiczne — chroni je limit
 na adres IP i budżet, nie logowanie twórcy. Przed produkcją trzeba je powiązać z kontami.

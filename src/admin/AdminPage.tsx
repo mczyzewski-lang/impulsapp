@@ -40,6 +40,7 @@ interface AdminState {
   integrations: {
     elevenlabs: { key: KeyInfo; voiceId: string };
     openai: { key: KeyInfo; imageModel: string };
+    uploadPost: { key: KeyInfo };
   };
   monthlyBudgetUsd: number;
   rates: Rates;
@@ -134,6 +135,7 @@ export default function AdminPage() {
   const [elevenlabsKey, setElevenlabsKey] = useState("");
   const [voiceId, setVoiceId] = useState("");
   const [openaiKey, setOpenaiKey] = useState("");
+  const [uploadPostKey, setUploadPostKey] = useState("");
   const [imageModel, setImageModel] = useState("");
   const [budget, setBudget] = useState("");
   const [rates, setRates] = useState<Record<keyof Rates, string>>({ ttsPer1kChars: "", sttPerMinute: "", imagePerImage: "" });
@@ -206,6 +208,7 @@ export default function AdminPage() {
       apply(await call<AdminState>("settings", token, { method: "PUT", body: JSON.stringify(body) }));
       setElevenlabsKey("");
       setOpenaiKey("");
+      setUploadPostKey("");
       setSavedNote(note);
       setTimeout(() => setSavedNote(null), 2500);
       setError(null);
@@ -215,7 +218,7 @@ export default function AdminPage() {
     setBusy(null);
   }
 
-  async function test(service: "elevenlabs" | "openai") {
+  async function test(service: "elevenlabs" | "openai" | "uploadPost") {
     setBusy(`test-${service}`);
     try {
       const result = await call<TestResult>("test", token, { method: "POST", body: JSON.stringify({ service }) });
@@ -266,6 +269,7 @@ export default function AdminPage() {
 
   const el = state?.integrations.elevenlabs;
   const oa = state?.integrations.openai;
+  const up = state?.integrations.uploadPost;
   const usage = state?.usage;
   const spent = usage?.totalUsd ?? 0;
   const limit = state?.monthlyBudgetUsd ?? 0;
@@ -296,7 +300,7 @@ export default function AdminPage() {
         <div>
           <h1 className="text-3xl font-bold">Integracje i wydatki</h1>
           <p className="mt-1.5 max-w-2xl text-ink-500">
-            Tu podłączasz ElevenLabs i OpenAI do studia wideo oraz pilnujesz, ile kosztują. Klucze trafiają tylko na serwer — panel pokazuje ich cztery ostatnie znaki.
+            Tu podłączasz ElevenLabs, OpenAI i Upload-Post oraz pilnujesz, ile kosztują. Klucze trafiają tylko na serwer — panel pokazuje ich cztery ostatnie znaki.
           </p>
         </div>
 
@@ -532,6 +536,46 @@ export default function AdminPage() {
                 </div>
               </form>
               {tests.openai && <p className={cn("mt-3 text-sm font-semibold", tests.openai.ok ? "text-emerald-700" : "text-rose-700")}>{tests.openai.message}</p>}
+            </Section>
+
+            {/* ── Upload-Post ── */}
+            <Section
+              icon={<KeyRound className="size-5 text-violet-600" />}
+              title="Upload-Post"
+              lead="Publikacja i planowanie wideo w social mediach. Ty kupujesz plan, a każdy twórca podpina własne konta do swojego profilu."
+            >
+              <div className="mt-3">
+                <KeyStatus info={up!.key} />
+              </div>
+              <form
+                className="mt-4 grid gap-4 sm:grid-cols-2"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (uploadPostKey) void save({ uploadPostKey }, "Klucz Upload-Post zapisany");
+                }}
+              >
+                <label className={labelClass}>
+                  Klucz API
+                  <input className={inputClass} type="password" autoComplete="off" value={uploadPostKey} onChange={(e) => setUploadPostKey(e.target.value)} placeholder={up!.key.set ? "Wpisz nowy, żeby podmienić" : "Wklej klucz z panelu Upload-Post"} />
+                </label>
+                <p className="self-end text-xs text-ink-500">
+                  Plan dostawcy jest rozliczany od liczby profili, czyli od liczby twórców z podpiętymi kontami. Panel liczy tu publikacje; koszt planu sprawdzisz na fakturze od Upload-Post.
+                </p>
+                <div className="flex flex-wrap gap-2 sm:col-span-2">
+                  <Button type="submit" variant="dark" disabled={busy === "save" || !uploadPostKey}>
+                    Zapisz
+                  </Button>
+                  <Button variant="outline" disabled={!up!.key.set || busy === "test-uploadPost"} onClick={() => void test("uploadPost")}>
+                    {busy === "test-uploadPost" ? <Loader2 className="size-4 animate-spin" /> : <ShieldCheck className="size-4" />} Sprawdź połączenie
+                  </Button>
+                  {up!.key.source === "panel" && (
+                    <Button variant="ghost" onClick={() => void save({ uploadPostKey: "" }, "Klucz Upload-Post usunięty")}>
+                      Usuń klucz
+                    </Button>
+                  )}
+                </div>
+              </form>
+              {tests.uploadPost && <p className={cn("mt-3 text-sm font-semibold", tests.uploadPost.ok ? "text-emerald-700" : "text-rose-700")}>{tests.uploadPost.message}</p>}
             </Section>
 
             {/* ── Dziennik ── */}

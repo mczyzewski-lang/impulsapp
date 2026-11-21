@@ -222,8 +222,8 @@ export default function CreatorVideoStudio() {
         lead={recording.title}
         action={
           saved ? (
-            <Link to="/studio/impuls" className={buttonClass("dark")}>
-              <Check className="size-4.5" /> Zapisano — dodaj do impulsu
+            <Link to={`/studio/publikacja/${recording.id}`} className={buttonClass("primary")}>
+              <Check className="size-4.5" /> Zapisano — wybierz, gdzie publikujesz
             </Link>
           ) : (
             <Button onClick={() => setSaved(true)}>

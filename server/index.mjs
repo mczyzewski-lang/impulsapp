@@ -8,7 +8,7 @@
 //   PORT                 port serwera (domyślnie 8080)
 //
 // Klucze można wpisać w panelu /admin albo podać jako zmienne (panel ma pierwszeństwo):
-//   ELEVENLABS_API_KEY, ELEVENLABS_VOICE_ID, OPENAI_API_KEY, OPENAI_IMAGE_MODEL
+//   ELEVENLABS_API_KEY, ELEVENLABS_VOICE_ID, OPENAI_API_KEY, OPENAI_IMAGE_MODEL, UPLOADPOST_API_KEY
 //
 // Uruchomienie: npm run build && npm start
 
@@ -32,7 +32,7 @@ const MAX_BODY = 60 * 1024 * 1024; // nagranie do transkrypcji
 // u dostawcy — administrator powinien wpisać własne.
 const DEFAULT_RATES = { ttsPer1kChars: 0.3, sttPerMinute: 0.01, imagePerImage: 0.2 };
 
-let settings = { elevenlabsKey: "", elevenlabsVoiceId: "", openaiKey: "", openaiImageModel: "", monthlyBudgetUsd: 20, rates: DEFAULT_RATES };
+let settings = { elevenlabsKey: "", elevenlabsVoiceId: "", openaiKey: "", openaiImageModel: "", uploadPostKey: "", monthlyBudgetUsd: 20, rates: DEFAULT_RATES };
 let persistent = true;
 
 async function loadSettings() {
@@ -62,6 +62,7 @@ function config() {
     elevenlabsVoiceId: settings.elevenlabsVoiceId || process.env.ELEVENLABS_VOICE_ID || "",
     openaiKey: settings.openaiKey || process.env.OPENAI_API_KEY || "",
     openaiImageModel: settings.openaiImageModel || process.env.OPENAI_IMAGE_MODEL || "gpt-image-1",
+    uploadPostKey: settings.uploadPostKey || process.env.UPLOADPOST_API_KEY || "",
   };
 }
 
@@ -206,8 +207,9 @@ async function aiApi(req, res, path) {
   const cfg = config();
 
   if (path === "/api/health") {
-    return json(res, 200, { elevenlabs: Boolean(cfg.elevenlabsKey && cfg.elevenlabsVoiceId), openai: Boolean(cfg.openaiKey) });
+    return json(res, 200, { elevenlabs: Boolean(cfg.elevenlabsKey && cfg.elevenlabsVoiceId), openai: Boolean(cfg.openaiKey), social: Boolean(cfg.uploadPostKey) });
   }
+  if (path.startsWith("/api/social/")) return socialApi(req, res, path, cfg);
   if (req.method !== "POST") return json(res, 405, { error: "Dozwolona metoda: POST" });
 
   // Te ścieżki są publiczne i każda kosztuje — stąd limit na adres i miesięczny budżet.
@@ -268,6 +270,63 @@ async function aiApi(req, res, path) {
   return json(res, 404, { error: "Nieznana ścieżka API" });
 }
 
+/* ───────────── API: publikacja w social mediach (Upload-Post) ───────────── */
+
+// Model: platforma (Impuls) ma jeden klucz API, a każdy twórca dostaje własny „profil” u dostawcy.
+// Twórca podpina konta na stronie dostawcy otwieranej jednorazowym linkiem — Impuls nie widzi jego haseł ani tokenów.
+const UPLOADPOST = "https://api.upload-post.com/api";
+const SOCIAL_PLATFORMS = ["tiktok", "instagram", "youtube", "facebook", "linkedin", "x"];
+const cleanProfile = (value) => (typeof value === "string" && /^[a-z0-9-]{2,60}$/.test(value) ? value : null);
+
+function uploadPost(cfg, path, init = {}) {
+  return fetch(`${UPLOADPOST}${path}`, { ...init, headers: { authorization: `Apikey ${cfg.uploadPostKey}`, ...init.headers } });
+}
+
+async function socialApi(req, res, path, cfg) {
+  if (!cfg.uploadPostKey) return json(res, 503, { error: "Publikacja w social mediach nie jest skonfigurowana" });
+  if (limited(`social:${clientIp(req)}`, 40, 10 * 60 * 1000)) return json(res, 429, { error: "Za dużo żądań. Spróbuj za kilka minut." });
+
+  // Link do podpięcia kont: tworzymy profil twórcy (jeśli go nie ma) i prosimy o jednorazowy adres.
+  if (path === "/api/social/connect" && req.method === "POST") {
+    const body = await readJson(req);
+    const profile = cleanProfile(body.profile);
+    if (!profile) return json(res, 400, { error: "Nieprawidłowy profil" });
+    await uploadPost(cfg, "/uploadposts/users", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ username: profile }) });
+    const upstream = await uploadPost(cfg, "/uploadposts/users/generate-jwt", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ username: profile, redirect_url: typeof body.returnUrl === "string" ? body.returnUrl.slice(0, 500) : undefined, platforms: SOCIAL_PLATFORMS }),
+    });
+    if (!upstream.ok) return json(res, 502, { error: "Dostawca odrzucił żądanie", status: upstream.status });
+    const data = await upstream.json();
+    return data.access_url ? json(res, 200, { url: data.access_url }) : json(res, 502, { error: "Brak adresu do podpięcia kont" });
+  }
+
+  // Które konta twórca ma już podpięte.
+  if (path === "/api/social/accounts" && req.method === "GET") {
+    const profile = cleanProfile(new URL(req.url, "http://localhost").searchParams.get("profile"));
+    if (!profile) return json(res, 400, { error: "Nieprawidłowy profil" });
+    const upstream = await uploadPost(cfg, "/uploadposts/users");
+    if (!upstream.ok) return json(res, 502, { error: "Dostawca odrzucił żądanie", status: upstream.status });
+    const data = await upstream.json();
+    const entry = (data.profiles ?? []).find((p) => p.username === profile);
+    const accounts = Object.entries(entry?.social_accounts ?? {})
+      .filter(([, value]) => value && typeof value === "object")
+      .map(([platform, value]) => ({ platform, handle: value.display_name ?? value.username ?? "" }));
+    return json(res, 200, { accounts });
+  }
+
+  // Publikacja albo zaplanowanie. Formularz (plik, tytuł, platformy, data) przekazujemy dalej bez zmian.
+  if (path === "/api/social/publish" && req.method === "POST") {
+    const upstream = await uploadPost(cfg, "/upload", { method: "POST", headers: { "content-type": req.headers["content-type"] ?? "" }, body: await readBody(req) });
+    if (!upstream.ok) return json(res, 502, { error: "Dostawca odrzucił publikację", status: upstream.status });
+    await record("Upload-Post", "Publikacja", 1, "post", 0);
+    return json(res, 200, await upstream.json());
+  }
+
+  return json(res, 404, { error: "Nieznana ścieżka API" });
+}
+
 /* ───────────── API: panel administratora ───────────── */
 
 function adminState() {
@@ -277,6 +336,7 @@ function adminState() {
     integrations: {
       elevenlabs: { key: describeKey(settings.elevenlabsKey, process.env.ELEVENLABS_API_KEY), voiceId: cfg.elevenlabsVoiceId },
       openai: { key: describeKey(settings.openaiKey, process.env.OPENAI_API_KEY), imageModel: cfg.openaiImageModel },
+      uploadPost: { key: describeKey(settings.uploadPostKey, process.env.UPLOADPOST_API_KEY) },
     },
     monthlyBudgetUsd: settings.monthlyBudgetUsd,
     rates: settings.rates,
@@ -308,7 +368,7 @@ async function adminApi(req, res, path) {
   if (path === "/api/admin/settings" && req.method === "PUT") {
     const body = await readJson(req);
     // Pole pominięte = bez zmian; pusty tekst = usuń wartość wpisaną w panelu.
-    for (const field of ["elevenlabsKey", "elevenlabsVoiceId", "openaiKey", "openaiImageModel"]) {
+    for (const field of ["elevenlabsKey", "elevenlabsVoiceId", "openaiKey", "openaiImageModel", "uploadPostKey"]) {
       const value = cleanKey(body[field]);
       if (value !== undefined) settings[field] = value;
     }
@@ -343,6 +403,13 @@ async function adminApi(req, res, path) {
         if (!cfg.openaiKey) return json(res, 200, { ok: false, message: "Brak klucza" });
         const upstream = await fetch("https://api.openai.com/v1/models", { headers: { authorization: `Bearer ${cfg.openaiKey}` } });
         return json(res, 200, upstream.ok ? { ok: true, message: "Klucz działa" } : { ok: false, message: `OpenAI odpowiedział kodem ${upstream.status}` });
+      }
+      if (service === "uploadPost") {
+        if (!cfg.uploadPostKey) return json(res, 200, { ok: false, message: "Brak klucza" });
+        const upstream = await uploadPost(cfg, "/uploadposts/users");
+        if (!upstream.ok) return json(res, 200, { ok: false, message: `Upload-Post odpowiedział kodem ${upstream.status}` });
+        const data = await upstream.json();
+        return json(res, 200, { ok: true, message: `Klucz działa · profili twórców: ${(data.profiles ?? []).length}` });
       }
     } catch {
       return json(res, 200, { ok: false, message: "Nie udało się połączyć z usługą" });

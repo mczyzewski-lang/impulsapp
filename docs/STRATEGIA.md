@@ -129,3 +129,54 @@ Link w mailu
 1. „Odbierz prywatne wideo i checklistę w Impulsie”
 2. „Nagrałam dla Ciebie krótkie wideo i dołożyłam checklistę. Odbierz je w moim prywatnym kanale w Impulsie”
 3. „Odbierz prywatny materiał i dołącz do kanału, w którym co tydzień wysyłam krótkie impulsy do działania”
+
+## 7. Wizja: od promptu do własnej publiczności
+
+Impuls jako jedna pętla dla twórcy, który rośnie organicznie:
+
+| Krok | Co robi twórca | Stan w prototypie |
+| --- | --- | --- |
+| 1. Treść | Wrzuca prompt, dostaje scenariusze (hook / pytanie + treść) | brak — treść wkleja ręcznie |
+| 2. Nagranie | Nagrywa z ręki z prompterem | jest |
+| 3. Montaż | Napisy, plansze w stylu marki, przycięcie | jest (podgląd; bez eksportu pliku) |
+| 4. Dystrybucja | Publikuje w social mediach i w kanale, z planowaniem | jest (social przez Upload-Post) |
+| 5. Przechwycenie | Link w bio → strona zapisu → newsletter | jest strona zapisu i formularz do osadzenia |
+| 6. Newsletter | Maile pisane z tego samego promptu co wideo | brak — są tylko trzy gotowe szablony |
+| 7. Awans | Po zapisie zaproszenie do kanału w Impulsie | jest |
+| 8. Relacja | Impulsy, narzędzia, czat odblokowany aktywnością, scoring | jest |
+
+Kroki 1–4 przyciągają twórców (darmowe narzędzie do organicznych zasięgów), kroki 5–8 dają im własną publiczność,
+a Impulsowi — użytkowników po stronie odbiorców.
+
+### Gdzie zarabiać
+
+Publikowanie i wysyłanie maili to silnik wzrostu: każda publikacja i każdy mail przyprowadza nowych odbiorców do Impulsu.
+Ograniczanie ich paywallem hamuje to, co ma rosnąć. Dlatego:
+
+- **Nie pobierać opłat za**: nagrywanie, podstawowy montaż, publikację, stronę zapisu, kanał.
+- **Zarabiać na pieniądzu, który przechodzi przez Impuls**: prowizja od sprzedaży w kanale (produkty cyfrowe, płatne
+  kanały, konsultacje), opłata za kwalifikowanego leada dla firm B2B, CRM i automatyzacje dla zespołów.
+- **Limity tylko tam, gdzie jest realny koszt krańcowy** — jako bezpiecznik, nie cennik: AI w montażu, wysyłka maili
+  powyżej uczciwego progu, profil u dostawcy social.
+
+Koszty, które trzeba pilnować w darmowym modelu:
+
+- **Profil social kosztuje za sztukę**, niezależnie od aktywności (rząd 2 USD miesięcznie przy większych planach
+  Upload-Post). Podpięcie kont warto odblokowywać po aktywacji, np. po pierwszym opublikowanym impulsie.
+- **Email**: koszt wysyłki i reputacja domeny. Darmowy limit warto wiązać z zaangażowaniem listy, nie z jej rozmiarem.
+- **AI**: napisy są tanie, obrazy i lektor droższe — stąd budżet miesięczny w panelu administratora.
+
+### Dostawca publikacji w social mediach
+
+Potrzebny model: jedna umowa platformy, wielu użytkowników podpina własne konta. Stan na listopad 2026, według stron
+dostawców i porównań (ceny do potwierdzenia przed zakupem):
+
+| Dostawca | Rozliczenie | Uwagi |
+| --- | --- | --- |
+| Upload-Post | za profil: ok. 50 USD / 25 profili, 147 USD / 75, 438 USD / 225 | white-label od planu Professional, link do podpięcia kont ważny 48 h; wybrany w prototypie |
+| Ayrshare | za profil, od ok. 149 USD miesięcznie | najdłużej na rynku, najszersza lista platform, najdrożej |
+| bundle.social | bez limitu kont, ok. 100 USD za 10 000 postów | rozdzielenie klientów przez „zespoły”; sprzeczne dane o cenie planów wieloużytkownikowych |
+| Post for Me, Outstand | za post, konta bez limitu | tanie przy wielu mało aktywnych użytkownikach |
+
+Przy modelu „jak najwięcej darmowych twórców” rozliczenie za post skaluje się lepiej niż za profil — warto to policzyć
+przed podpisaniem dłuższej umowy.

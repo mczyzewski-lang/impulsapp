@@ -33,6 +33,8 @@ const CreatorRecorder = lazy(() => import("./creator/studio/CreatorRecorder"));
 const CreatorVideoStudio = lazy(() => import("./creator/studio/CreatorVideoStudio"));
 const CreatorsLanding = lazy(() => import("./landing/CreatorsLanding"));
 const AdminPage = lazy(() => import("./admin/AdminPage"));
+const CreatorPublish = lazy(() => import("./creator/publish/CreatorPublish"));
+const CreatorCalendar = lazy(() => import("./creator/publish/CreatorCalendar"));
 const CreatorLinks = lazy(() => import("./creator/CreatorLinks"));
 const CreatorSettings = lazy(() => import("./creator/CreatorSettings"));
 
@@ -92,6 +94,8 @@ export default function App() {
           <Route path="materialy" element={<CreatorMaterials />} />
           <Route path="nagraj" element={<CreatorRecorder />} />
           <Route path="montaz/:id" element={<CreatorVideoStudio />} />
+          <Route path="publikacja/:id" element={<CreatorPublish />} />
+          <Route path="kalendarz" element={<CreatorCalendar />} />
           <Route path="odbiorcy" element={<CreatorAudience />} />
           <Route path="ambasadorzy" element={<CreatorAmbassadors />} />
           <Route path="interakcje" element={<CreatorInteractions />} />

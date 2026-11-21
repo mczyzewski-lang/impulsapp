@@ -7,11 +7,13 @@
  * dzięki czemu studio da się przejść w całości bez backendu.
  */
 
-const API = (import.meta.env.VITE_API_URL as string | undefined) ?? "";
+export const API = (import.meta.env.VITE_API_URL as string | undefined) ?? "";
 
 export interface Capabilities {
   elevenlabs: boolean;
   openai: boolean;
+  /** Publikacja w social mediach (Upload-Post). */
+  social: boolean;
 }
 
 let capabilities: Promise<Capabilities> | null = null;
@@ -24,9 +26,9 @@ export function getCapabilities(): Promise<Capabilities> {
       // Hosting statyczny zwraca tu index.html — liczy się tylko prawdziwy JSON z serwera.
       if (!res.ok || !res.headers.get("content-type")?.includes("application/json")) throw new Error("brak API");
       const data = (await res.json()) as Partial<Capabilities>;
-      return { elevenlabs: Boolean(data.elevenlabs), openai: Boolean(data.openai) };
+      return { elevenlabs: Boolean(data.elevenlabs), openai: Boolean(data.openai), social: Boolean(data.social) };
     } catch {
-      return { elevenlabs: false, openai: false };
+      return { elevenlabs: false, openai: false, social: false };
     }
   })();
   return capabilities;
