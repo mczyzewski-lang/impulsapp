@@ -39,7 +39,7 @@ export default function CreatorSignupPage() {
   const url = `${APP_DOMAIN}/s/${creator.slug}`;
   const embedQuery = [embed.theme === "light" ? "motyw=jasny" : "", embed.showHeadline ? "" : "naglowek=0"].filter(Boolean).join("&");
   const embedUrl = `https://${APP_DOMAIN}/e/${creator.slug}${embedQuery ? `?${embedQuery}` : ""}`;
-  const embedCode = `<iframe src="${embedUrl}" title="Zapis: ${creator.channelName}" width="100%" height="${embed.showHeadline ? 340 : 190}" style="border:0;max-width:520px" loading="lazy"></iframe>`;
+  const embedCode = `<iframe src="${embedUrl}" title="Zapis: ${creator.channelName}" width="100%" height="${embed.showHeadline ? 400 : 230}" style="border:0;max-width:520px" loading="lazy"></iframe>`;
 
   return (
     <div>
