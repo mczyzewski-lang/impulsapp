@@ -147,3 +147,8 @@
   --color-volt-200: var(--base-volt-200);
   --color-volt-700: var(--base-volt-700);
 }
+
+/* Odstęp od góry ekranu powiększony o notch (pt-safe i pt-* ustawiają tę samą właściwość, więc nie da się ich łączyć). */
+@utility pt-safe-5 {
+  padding-top: calc(env(safe-area-inset-top) + 1.25rem);
+}

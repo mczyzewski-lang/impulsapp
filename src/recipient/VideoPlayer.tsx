@@ -12,7 +12,7 @@ interface VideoPlayerProps {
 const DEMO_SECONDS = 5;
 
 /**
- * Symulowany odtwarzacz (brak prawdziwych plików wideo w demo).
+ * Odtwarzacz pojedynczego materiału. Bez pliku wideo odtwarzanie jest symulowane:
  * „Odtwarzanie” trwa kilka sekund, po czym materiał liczy się jako obejrzany.
  */
 export function VideoPlayer({ video, className, onComplete }: VideoPlayerProps) {
@@ -21,7 +21,15 @@ export function VideoPlayer({ video, className, onComplete }: VideoPlayerProps) 
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
 
+  const media = useRef<HTMLVideoElement>(null);
+
   useEffect(() => {
+    const el = media.current;
+    if (el) {
+      if (playing) void el.play().catch(() => setPlaying(false));
+      else el.pause();
+      return;
+    }
     if (!playing) return;
     const id = setInterval(() => {
       setProgress((p) => Math.min(100, p + 100 / (DEMO_SECONDS * 10)));
@@ -39,14 +47,36 @@ export function VideoPlayer({ video, className, onComplete }: VideoPlayerProps) 
   }, [finished]);
 
   function toggle() {
-    if (finished) setProgress(0);
+    if (finished) {
+      setProgress(0);
+      if (media.current) media.current.currentTime = 0;
+    }
     setPlaying((p) => !p || finished);
   }
 
   return (
     <div className={cn("theme-base relative aspect-video w-full overflow-hidden rounded-2xl bg-linear-to-br text-white", video.poster, className)}>
-      <div className="bg-grid absolute inset-0 opacity-60" />
-      <div className="absolute -top-10 -right-10 size-40 rounded-full bg-white/15 blur-3xl" />
+      {video.src ? (
+        <video
+          ref={media}
+          src={video.src}
+          poster={video.image}
+          muted
+          playsInline
+          preload="metadata"
+          className="absolute inset-0 size-full object-cover"
+          onTimeUpdate={(e) => {
+            const el = e.currentTarget;
+            if (el.duration) setProgress(Math.min(99, (el.currentTime / el.duration) * 100));
+          }}
+          onEnded={() => setProgress(100)}
+        />
+      ) : (
+        <>
+          <div className="bg-grid absolute inset-0 opacity-60" />
+          <div className="absolute -top-10 -right-10 size-40 rounded-full bg-white/15 blur-3xl" />
+        </>
+      )}
 
       <button
         type="button"
@@ -72,7 +102,7 @@ export function VideoPlayer({ video, className, onComplete }: VideoPlayerProps) 
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-ink-950/80 to-transparent px-3.5 pt-8 pb-3">
         <div className="flex items-center justify-between text-xs font-semibold">
-          <span>{playing ? "Odtwarzanie (demo)" : finished ? "Koniec" : "Dotknij, żeby odtworzyć"}</span>
+          <span>{playing ? "Odtwarzanie" : finished ? "Koniec" : "Dotknij, żeby odtworzyć"}</span>
           <span>{video.duration}</span>
         </div>
         <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/25">

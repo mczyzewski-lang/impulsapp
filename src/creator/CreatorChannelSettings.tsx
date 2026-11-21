@@ -88,7 +88,7 @@ export default function CreatorChannelSettings() {
             <h2 className="text-lg font-bold">Wideo powitalne</h2>
             <p className="mt-1 text-sm text-ink-500">Pierwsza rzecz, którą widzi nowa osoba w kanale. Najlepiej 1–3 minuty.</p>
             <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center">
-              <VideoPoster poster={videos[0].poster} duration={videos[0].duration} className="aspect-video w-full sm:w-56" />
+              <VideoPoster poster={videos[0].poster} image={videos[0].image} duration={videos[0].duration} className="aspect-video w-full sm:w-56" />
               <div className="flex-1">
                 <p className="text-sm font-semibold">{videos[0].title}</p>
                 <p className="mt-0.5 text-xs text-ink-400">Obejrzało 84% nowych odbiorców</p>

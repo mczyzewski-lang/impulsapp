@@ -57,7 +57,7 @@ interface ReelProps {
 /**
  * Pojedynczy materiał w feedzie. Obsługuje formaty 9:16, 1:1 i 16:9:
  * pionowe wypełnia ekran, pozostałe są wyśrodkowane na rozmytym tle.
- * Odtwarzanie jest symulowane (brak plików wideo w demo).
+ * Materiały bez pliku wideo mają odtwarzanie symulowane.
  */
 function Reel({ video, tool, creatorName, position, active, watched, isLast, showSwipeHint, onComplete, onOpenTool, onOpenNotes, onNext }: ReelProps) {
   const [progress, setProgress] = useState(0);
@@ -68,8 +68,16 @@ function Reel({ video, tool, creatorName, position, active, watched, isLast, sho
 
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
+  const media = useRef<HTMLVideoElement>(null);
 
+  // Materiał z plikiem odtwarzamy naprawdę; bez pliku postęp jest symulowany.
   useEffect(() => {
+    const el = media.current;
+    if (el) {
+      if (playing) void el.play().catch(() => setPaused(true));
+      else el.pause();
+      return;
+    }
     if (!playing) return;
     const id = setInterval(() => setProgress((p) => Math.min(100, p + 100 / (DEMO_SECONDS * 10))), 100);
     return () => clearInterval(id);
@@ -79,12 +87,17 @@ function Reel({ video, tool, creatorName, position, active, watched, isLast, sho
     if (finished) onCompleteRef.current();
   }, [finished]);
 
+  // Po przewinięciu dalej materiał wraca na początek.
   useEffect(() => {
-    if (!active) setPaused(false);
+    if (active) return;
+    setPaused(false);
+    setProgress(0);
+    if (media.current) media.current.currentTime = 0;
   }, [active]);
 
   function toggle() {
     if (finished) {
+      if (media.current) media.current.currentTime = 0;
       setProgress(0);
       setPaused(false);
     } else {
@@ -98,7 +111,12 @@ function Reel({ video, tool, creatorName, position, active, watched, isLast, sho
   return (
     <section data-reel={video.id} className="theme-base relative h-full snap-start snap-always overflow-hidden bg-black text-white">
       {/* Tło dla formatów innych niż pionowy */}
-      {!vertical && <div className={cn("absolute inset-0 scale-125 bg-linear-to-b opacity-40 blur-3xl", video.poster)} />}
+      {!vertical &&
+        (video.image ? (
+          <img src={video.image} alt="" className="absolute inset-0 size-full scale-125 object-cover opacity-50 blur-3xl" />
+        ) : (
+          <div className={cn("absolute inset-0 scale-125 bg-linear-to-b opacity-40 blur-3xl", video.poster)} />
+        ))}
 
       {/* Kadr wideo w swoich proporcjach */}
       <div
@@ -108,8 +126,27 @@ function Reel({ video, tool, creatorName, position, active, watched, isLast, sho
           vertical ? "inset-0" : cn("inset-x-0 shadow-2xl", formatAspect[video.format], video.format === "1:1" ? "top-[16%]" : "top-[24%]"),
         )}
       >
-        <div className="bg-grid absolute inset-0 opacity-50" />
-        <div className="absolute -top-16 -right-16 size-72 rounded-full bg-white/15 blur-3xl" />
+        {video.src ? (
+          <video
+            ref={media}
+            src={video.src}
+            poster={video.image}
+            muted
+            playsInline
+            preload={active ? "auto" : "metadata"}
+            className="absolute inset-0 size-full object-cover"
+            onTimeUpdate={(e) => {
+              const el = e.currentTarget;
+              if (el.duration) setProgress(Math.min(99, (el.currentTime / el.duration) * 100));
+            }}
+            onEnded={() => setProgress(100)}
+          />
+        ) : (
+          <>
+            <div className="bg-grid absolute inset-0 opacity-50" />
+            <div className="absolute -top-16 -right-16 size-72 rounded-full bg-white/15 blur-3xl" />
+          </>
+        )}
         <span
           className={cn(
             "absolute top-1/2 left-1/2 inline-flex size-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/35 backdrop-blur transition-opacity duration-200",
@@ -217,7 +254,8 @@ function VideoList({ videos, watched, onPick, toggle }: { videos: Video[]; watch
             <button type="button" onClick={() => onPick(v.id)} className="flex w-full gap-3 rounded-2xl border border-line bg-white p-2.5 text-left">
               {/* Miniatura zachowuje proporcje nagrania */}
               <span className="theme-base flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-black">
-                <span className={cn("relative block bg-linear-to-b", v.poster, formatAspect[v.format], v.format === "16:9" ? "w-full" : "h-full")}>
+                <span className={cn("relative block overflow-hidden bg-linear-to-b", v.poster, formatAspect[v.format], v.format === "16:9" ? "w-full" : "h-full")}>
+                  {v.image && <img src={v.image} alt="" className="absolute inset-0 size-full object-cover" />}
                   <span className="absolute top-1/2 left-1/2 inline-flex size-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-ink-900">
                     <Play className="ml-0.5 size-3" fill="currentColor" />
                   </span>

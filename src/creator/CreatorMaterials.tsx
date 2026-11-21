@@ -52,7 +52,7 @@ export default function CreatorMaterials() {
             const s = impulseStats.find((i) => i.id === v.id);
             return (
               <div key={v.id} className="flex items-center gap-4 p-3.5">
-                <VideoPoster poster={v.poster} duration={v.duration} className="h-14 w-24 shrink-0" />
+                <VideoPoster poster={v.poster} image={v.image} duration={v.duration} className="h-14 w-24 shrink-0" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold">{v.title}</p>
                   <p className="text-xs text-ink-400">{v.tag} · {v.date} · format {v.format}</p>

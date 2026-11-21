@@ -46,7 +46,7 @@ export default function OnboardingPage() {
 
   return (
     <PhoneFrame dark>
-      <div className="pt-safe flex shrink-0 items-center gap-2 px-5 pt-5 pb-1" aria-label={`Krok ${steps.indexOf(step) + 1} z ${steps.length}`}>
+      <div className="pt-safe-5 flex shrink-0 items-center gap-2 px-5 pb-1" aria-label={`Krok ${steps.indexOf(step) + 1} z ${steps.length}`}>
         {steps.map((i) => (
           <span key={i} className={`h-1.5 flex-1 rounded-full transition-colors ${i <= step ? "bg-ink-900" : "bg-ink-900/10"}`} />
         ))}

@@ -47,7 +47,11 @@ export interface Video {
   duration: string;
   date: string;
   tag: string;
+  /** Gradient zastępczy — widoczny, gdy materiał nie ma pliku wideo ani okładki. */
   poster: string;
+  /** Plik wideo i okładka (public/videos). Bez nich odtwarzanie jest symulowane. */
+  src?: string;
+  image?: string;
   isWelcome?: boolean;
   takeaways: string[];
   toolId?: string;
@@ -56,6 +60,8 @@ export interface Video {
 export const videos: Video[] = [
   {
     id: "start",
+    src: "/videos/start.mp4",
+    image: "/videos/start.jpg",
     format: "9:16",
     title: "Zacznij tutaj: jak wycisnąć najwięcej z tego kanału",
     description:
@@ -73,6 +79,8 @@ export const videos: Video[] = [
   },
   {
     id: "pytanie-otwierajace",
+    src: "/videos/pytanie-otwierajace.mp4",
+    image: "/videos/pytanie-otwierajace.jpg",
     format: "9:16",
     title: "Jedno pytanie, które otwiera rozmowę sprzedażową",
     description:
@@ -90,6 +98,8 @@ export const videos: Video[] = [
   },
   {
     id: "wycena",
+    src: "/videos/wycena.mp4",
+    image: "/videos/wycena.jpg",
     format: "16:9",
     title: "Jak wycenić ofertę, żeby nie tłumaczyć się z ceny",
     description: "Trzy elementy wyceny, które sprawiają, że rozmowa o pieniądzach przestaje być niezręczna.",
@@ -106,6 +116,8 @@ export const videos: Video[] = [
   },
   {
     id: "follow-up",
+    src: "/videos/follow-up.mp4",
+    image: "/videos/follow-up.jpg",
     format: "1:1",
     title: "Follow-up, który nie brzmi jak naganianie",
     description: "Jak wrócić do klienta po ciszy i dać mu powód, żeby odpisał.",
@@ -122,6 +134,8 @@ export const videos: Video[] = [
   },
   {
     id: "sygnaly-decyzji",
+    src: "/videos/sygnaly-decyzji.mp4",
+    image: "/videos/sygnaly-decyzji.jpg",
     format: "9:16",
     title: "3 sygnały, że klient jest gotowy na decyzję",
     description: "Po czym poznać, że czas przestać przekonywać i po prostu zaproponować kolejny krok.",

@@ -9,11 +9,17 @@ import { UnlockProgress } from "@/components/UnlockProgress";
 import { useAppUi } from "./RecipientLayout";
 
 /** Pionowa okładka materiału — zapowiedź pełnoekranowego wideo. */
-function ReelCover({ poster, className, children }: { poster: string; className?: string; children: React.ReactNode }) {
+function ReelCover({ poster, image, className, children }: { poster: string; image?: string; className?: string; children: React.ReactNode }) {
   return (
     <div className={cn("theme-base relative overflow-hidden rounded-2xl bg-linear-to-b text-white", poster, className)}>
-      <div className="bg-grid absolute inset-0 opacity-50" />
-      <div className="absolute -top-10 -right-10 size-40 rounded-full bg-white/15 blur-3xl" />
+      {image ? (
+        <img src={image} alt="" className="absolute inset-0 size-full object-cover" />
+      ) : (
+        <>
+          <div className="bg-grid absolute inset-0 opacity-50" />
+          <div className="absolute -top-10 -right-10 size-40 rounded-full bg-white/15 blur-3xl" />
+        </>
+      )}
       <div className="absolute inset-x-0 bottom-0 h-2/3 bg-linear-to-t from-black/80 to-transparent" />
       {children}
     </div>
@@ -47,7 +53,7 @@ export default function UserChannelHome() {
 
       <Card className="overflow-hidden">
         <Link to={`/app/wideo/${latest.id}`} className="block p-2.5">
-          <ReelCover poster={latest.poster} className={coverAspect[latest.format]}>
+          <ReelCover poster={latest.poster} image={latest.image} className={coverAspect[latest.format]}>
             <span className="absolute top-1/2 left-1/2 inline-flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-ink-900 shadow-xl">
               <Play className="ml-1 size-6" fill="currentColor" />
             </span>
@@ -119,7 +125,7 @@ export default function UserChannelHome() {
         <div className="no-scrollbar -mx-4 flex snap-x scroll-px-4 gap-3 overflow-x-auto px-4">
           {earlier.map((v) => (
             <Link key={v.id} to={`/app/wideo/${v.id}`} className="w-36 shrink-0 snap-start">
-              <ReelCover poster={v.poster} className="aspect-[9/16]">
+              <ReelCover poster={v.poster} image={v.image} className="aspect-[9/16]">
                 {watched.includes(v.id) && (
                   <span className="absolute top-2 left-2 inline-flex size-6 items-center justify-center rounded-full bg-volt-400 text-ink-950">
                     <Check className="size-3.5" strokeWidth={3} />

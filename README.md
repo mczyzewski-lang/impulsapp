@@ -73,10 +73,12 @@ Tokeny designu (kolory `ink-*`, `volt-*`, fonty) są w `src/index.css` w bloku `
 
 ## Co jest mockiem
 
-- Wideo jest symulowane: aktywny materiał w feedzie „gra” 5 sekund i wtedy liczy się jako obejrzany.
+- Kanał Marty ma prawdziwe pliki wideo (`public/videos`, 5 klipów po 6 sekund, bez dźwięku) i zdjęcie twórczyni
+  (`public/creators`). Zdjęcie i klipy zostały wygenerowane przez AI — Marta jest postacią fikcyjną. Materiał liczy się
+  jako obejrzany po odtworzeniu do końca. Kanał Piotra nie ma plików: tam odtwarzanie jest symulowane (5 sekund).
   Dopuszczalne formaty to 9:16, 1:1 i 16:9 (`Video.format`); pionowe wypełnia ekran, pozostałe są wyśrodkowane na rozmytym tle.
 - Strona zapisu nie wysyła maili — po zapisie pokazuje podgląd wiadomości. Treść strony edytowana w panelu zapisuje się w `localStorage`.
-- Awatary twórców to ilustracje SVG (`components/ui/Avatar.tsx`); docelowo zastąpi je zdjęcie wgrane przez twórcę.
+- Awatar twórcy to zdjęcie z `public/creators`, a gdy go nie ma — ilustracja SVG (`components/ui/Avatar.tsx`).
 - Pobieranie narzędzi/plików, upload w kreatorze impulsu, zapisy ustawień i wysyłka wiadomości zmieniają tylko stan lokalny.
 - Liczby w panelu twórcy oraz persona „Marta Zielińska” są fikcyjne.
 

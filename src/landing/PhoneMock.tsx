@@ -38,7 +38,7 @@ export function PhoneMock({ className }: { className?: string }) {
           </div>
 
           <div className="rounded-2xl border border-line bg-white p-2.5">
-            <VideoPoster poster={featured.poster} duration={featured.duration} className="aspect-video" />
+            <VideoPoster poster={featured.poster} image={featured.image} duration={featured.duration} className="aspect-video" />
             <p className="mt-2 text-[10px] font-semibold tracking-wide text-violet-600 uppercase">{featured.tag}</p>
             <p className="text-[13px] leading-snug font-bold">{featured.title}</p>
           </div>

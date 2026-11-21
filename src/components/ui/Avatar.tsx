@@ -25,6 +25,11 @@ const portraits: Record<string, Portrait> = {
   "Piotr Malec": { bg: ["#14b8a6", "#0369a1"], skin: "#e8b78e", hair: "#1f2430", shirt: "#f5f6fa", style: "short" },
 };
 
+/** Zdjęcia twórców (pliki w public/creators). Mają pierwszeństwo przed ilustracją. */
+const photos: Record<string, string> = {
+  "Marta Zielińska": "/creators/marta-zielinska.jpg",
+};
+
 function PortraitSvg({ portrait, id }: { portrait: Portrait; id: string }) {
   const { bg, skin, hair, shirt, style } = portrait;
   return (
@@ -75,6 +80,11 @@ const sizes = {
 export function Avatar({ name, size = "md", className }: AvatarProps) {
   const hash = [...name].reduce((a, c) => a + c.charCodeAt(0), 0);
   const portrait = portraits[name];
+  const photo = photos[name];
+
+  if (photo) {
+    return <img src={photo} alt={name} className={cn("inline-block shrink-0 rounded-full object-cover", sizes[size], className)} />;
+  }
 
   if (portrait) {
     return (

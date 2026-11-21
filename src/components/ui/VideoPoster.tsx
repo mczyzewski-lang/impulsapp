@@ -3,6 +3,8 @@ import { cn } from "@/lib/cn";
 
 interface VideoPosterProps {
   poster: string;
+  /** Okładka wideo; bez niej widać gradient. */
+  image?: string;
   duration?: string;
   className?: string;
   playSize?: "sm" | "lg";
@@ -10,11 +12,17 @@ interface VideoPosterProps {
 }
 
 /** Zastępnik miniatury wideo (mock — bez prawdziwych plików). */
-export function VideoPoster({ poster, duration, className, playSize = "sm", watched }: VideoPosterProps) {
+export function VideoPoster({ poster, image, duration, className, playSize = "sm", watched }: VideoPosterProps) {
   return (
     <div className={cn("relative overflow-hidden rounded-xl bg-linear-to-br", poster, className)}>
-      <div className="bg-grid absolute inset-0 opacity-60" />
-      <div className="absolute -top-8 -right-8 size-28 rounded-full bg-white/15 blur-2xl" />
+      {image ? (
+        <img src={image} alt="" className="absolute inset-0 size-full object-cover" />
+      ) : (
+        <>
+          <div className="bg-grid absolute inset-0 opacity-60" />
+          <div className="absolute -top-8 -right-8 size-28 rounded-full bg-white/15 blur-2xl" />
+        </>
+      )}
       <span
         className={cn(
           "absolute top-1/2 left-1/2 inline-flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-ink-900 shadow-lg",
