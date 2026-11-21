@@ -9,10 +9,11 @@ import { buttonClass } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { CopyButton } from "@/components/ui/CopyButton";
 import { Toggle } from "@/components/ui/Toggle";
+import { EmbedForm, type EmbedOptions } from "@/landing/EmbedSignupPage";
 import { SignupCard } from "@/landing/PublicSignupPage";
 import { PageHeader, inputClass, labelClass } from "./CreatorLayout";
 
-const tabs = ["Strona", "Automatyczne maile"] as const;
+const tabs = ["Strona", "Osadź na swojej stronie", "Automatyczne maile"] as const;
 type Tab = (typeof tabs)[number];
 
 const stats = [
@@ -33,7 +34,12 @@ export default function CreatorSignupPage() {
   const [enabled, setEnabled] = useState<Record<string, boolean>>({ welcome: true, reminder: true, impulse: true });
   const [subjects, setSubjects] = useState<Record<string, string>>(Object.fromEntries(autoEmails.map((e) => [e.id, e.subject])));
 
+  const [embed, setEmbed] = useState<EmbedOptions>({ theme: "dark", showHeadline: true });
+
   const url = `${APP_DOMAIN}/s/${creator.slug}`;
+  const embedQuery = [embed.theme === "light" ? "motyw=jasny" : "", embed.showHeadline ? "" : "naglowek=0"].filter(Boolean).join("&");
+  const embedUrl = `https://${APP_DOMAIN}/e/${creator.slug}${embedQuery ? `?${embedQuery}` : ""}`;
+  const embedCode = `<iframe src="${embedUrl}" title="Zapis: ${creator.channelName}" width="100%" height="${embed.showHeadline ? 340 : 190}" style="border:0;max-width:520px" loading="lazy"></iframe>`;
 
   return (
     <div>
@@ -120,6 +126,65 @@ export default function CreatorSignupPage() {
             <p className="mb-2 text-xs font-semibold tracking-wide text-ink-400 uppercase">Podgląd na żywo</p>
             <div className="pointer-events-none overflow-hidden rounded-3xl bg-ink-900 px-5 py-8 text-white select-none">
               <SignupCard creator={creator} page={page} />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {tab === "Osadź na swojej stronie" && (
+        <div className="grid gap-5 lg:grid-cols-2">
+          <Card className="min-w-0 self-start p-5">
+            <h2 className="text-lg font-bold">Formularz na Twojej stronie</h2>
+            <p className="mt-1 text-sm text-ink-500">
+              Kierujesz ruch na własną stronę? Wklej ten kod tam, gdzie ma się pojawić zapis. To sam kontener z polem email —
+              reszta strony zostaje Twoja. Zapisane osoby dostają te same maile z linkiem do kanału.
+            </p>
+
+            <div className="mt-5 flex items-center justify-between gap-4">
+              <span className="text-[15px] font-medium">Motyw</span>
+              <div className="inline-flex rounded-xl bg-ink-900/5 p-1" role="radiogroup" aria-label="Motyw formularza">
+                {(["dark", "light"] as const).map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    role="radio"
+                    aria-checked={embed.theme === t}
+                    onClick={() => setEmbed((o) => ({ ...o, theme: t }))}
+                    className={cn("rounded-lg px-3.5 py-1.5 text-sm font-semibold transition", embed.theme === t ? "bg-white shadow-sm" : "text-ink-500")}
+                  >
+                    {t === "dark" ? "Ciemny" : "Jasny"}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="mt-3 flex items-center justify-between gap-4 border-t border-line pt-3">
+              <span className="text-[15px] font-medium">Pokaż nagłówek i opis</span>
+              <Toggle checked={embed.showHeadline} onChange={(v) => setEmbed((o) => ({ ...o, showHeadline: v }))} label="Pokaż nagłówek i opis" />
+            </div>
+
+            <div className="mt-5 rounded-xl bg-ink-900 p-4">
+              <p className="text-xs font-semibold text-ink-300">Kod do wklejenia</p>
+              <pre className="mt-2 font-mono text-[13px] leading-relaxed break-all whitespace-pre-wrap text-volt-400">{embedCode}</pre>
+              <div className="mt-3">
+                <CopyButton text={embedCode} label="Kopiuj kod" />
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-ink-400">Działa w WordPressie, Webflow, Carrd i każdym edytorze, który pozwala wkleić własny HTML.</p>
+          </Card>
+
+          <div className="min-w-0 lg:sticky lg:top-8 lg:self-start">
+            <p className="mb-2 text-xs font-semibold tracking-wide text-ink-400 uppercase">Podgląd na Twojej stronie</p>
+            {/* Umowna strona twórcy: szare bloki to jego własna treść */}
+            <div className="rounded-3xl border border-line bg-white p-5">
+              <div className="h-3 w-24 rounded-full bg-ink-900/10" />
+              <div className="mt-5 h-5 w-3/4 rounded-full bg-ink-900/10" />
+              <div className="mt-2.5 h-3 w-full rounded-full bg-ink-900/5" />
+              <div className="mt-2 h-3 w-5/6 rounded-full bg-ink-900/5" />
+              <div className="my-5">
+                <EmbedForm creator={creator} page={page} options={embed} interactive={false} />
+              </div>
+              <div className="h-3 w-full rounded-full bg-ink-900/5" />
+              <div className="mt-2 h-3 w-2/3 rounded-full bg-ink-900/5" />
             </div>
           </div>
         </div>

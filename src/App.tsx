@@ -28,6 +28,7 @@ const CreatorInteractions = lazy(() => import("./creator/CreatorInteractions"));
 const CreatorAnalytics = lazy(() => import("./creator/CreatorAnalytics"));
 const CreatorSignupPage = lazy(() => import("./creator/CreatorSignupPage"));
 const PublicSignupPage = lazy(() => import("./landing/PublicSignupPage"));
+const EmbedSignupPage = lazy(() => import("./landing/EmbedSignupPage"));
 const CreatorLinks = lazy(() => import("./creator/CreatorLinks"));
 const CreatorSettings = lazy(() => import("./creator/CreatorSettings"));
 
@@ -46,6 +47,7 @@ function ScrollToTop() {
  * Mapa tras:
  *   /            landing page
  *   /s/:slug     publiczna strona zapisu twórcy
+ *   /e/:slug     sam formularz zapisu do osadzenia (iframe) na stronie twórcy
  *   /k/:slug     zaproszenie do kanału twórcy (wejście odbiorcy z linku)
  *   /app/*       aplikacja odbiorcy
  *   /studio/*    panel twórcy
@@ -60,6 +62,7 @@ export default function App() {
         <Route path="/" element={isNative ? <Navigate to="/app" replace /> : <LandingPage />} />
 
         <Route path="/s/:slug" element={<PublicSignupPage />} />
+        <Route path="/e/:slug" element={<EmbedSignupPage />} />
         <Route path="/k/:slug/*" element={<CreatorInvitePage />} />
         <Route path="/app/start" element={<OnboardingPage />} />
         <Route path="/app" element={<RecipientLayout />}>

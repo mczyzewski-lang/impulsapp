@@ -25,6 +25,7 @@ npm run build
 | --- | --- |
 | `/` | `LandingPage` |
 | `/s/:slug` | `PublicSignupPage` — publiczna strona zapisu twórcy; po zapisie podgląd maila z linkiem do kanału |
+| `/e/:slug` | `EmbedSignupPage` — sam formularz zapisu do osadzenia w iframe na stronie twórcy (`?motyw=jasny`, `?naglowek=0`) |
 | `/k/:slug` | `CreatorInvitePage` — zaproszenie do kanału (wejście z linku twórcy) |
 | `/app/start` | `OnboardingPage` — konto → wideo powitalne → zasady odblokowania czatu |
 | `/app` | `UserChannelHome` |

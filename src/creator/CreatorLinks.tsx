@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Link2, Mail } from "lucide-react";
 import { campaigns, creator, emailSnippets, nf, tools, videos } from "@/data/mock";
-import { channelPath } from "@/config";
+import { Link } from "react-router-dom";
+import { APP_DOMAIN, channelPath } from "@/config";
+import { buttonClass } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { CopyButton } from "@/components/ui/CopyButton";
 import { PageHeader, inputClass, labelClass } from "./CreatorLayout";
@@ -89,6 +91,18 @@ export default function CreatorLinks() {
           </ul>
         </Card>
       </div>
+
+      <Card className="mt-5 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <h2 className="text-lg font-bold">Strona zapisu (lead magnet)</h2>
+          <p className="mt-0.5 text-sm text-ink-500">Dla osób, których nie masz jeszcze na liście. Zapis → mail z linkiem → Twój kanał.</p>
+          <p className="mt-2 truncate font-mono text-sm font-medium">{APP_DOMAIN}/s/{creator.slug}</p>
+        </div>
+        <div className="flex shrink-0 flex-wrap gap-2">
+          <CopyButton text={`https://${APP_DOMAIN}/s/${creator.slug}`} label="Kopiuj adres" />
+          <Link to="/studio/strona" className={buttonClass("dark", "sm")}>Edytuj i osadź</Link>
+        </div>
+      </Card>
 
       <h2 className="mt-9 mb-3 text-lg font-bold">Kampanie</h2>
       <Card className="overflow-x-auto">
