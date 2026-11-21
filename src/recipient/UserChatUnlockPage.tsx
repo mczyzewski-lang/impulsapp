@@ -19,29 +19,30 @@ export default function UserChatUnlockPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <div className="theme-base rounded-3xl border border-white/10 bg-ink-800 p-5 text-white">
+    // Jeden kontener: nagłówek z postępem, a pod nim kroki jako wiersze tej samej karty.
+    <div className="overflow-hidden rounded-3xl border border-line bg-white">
+      <div className="p-5">
         <div className="flex items-center gap-4">
           <span className="relative">
             <Avatar name={creator.name} size="lg" />
-            <span className="absolute -right-1 -bottom-1 inline-flex size-6 items-center justify-center rounded-full bg-volt-400 text-ink-950 ring-2 ring-ink-800">
+            <span className="absolute -right-1 -bottom-1 inline-flex size-6 items-center justify-center rounded-full bg-volt-400 text-ink-950 ring-2 ring-white">
               <Lock className="size-3.5" strokeWidth={2.5} />
             </span>
           </span>
           <div>
             <h1 className="text-xl leading-tight font-bold">Odblokuj czat z {creator.firstNameIns}</h1>
-            <p className="text-sm text-ink-300">{stepsDone}/{steps.length} kroków wykonane</p>
+            <p className="text-sm text-ink-500">{stepsDone}/{steps.length} kroków wykonane</p>
           </div>
         </div>
-        <ProgressBar value={stepsDone} max={steps.length} className="mt-5 h-2.5 bg-white/15" label="Postęp odblokowania czatu" />
-        <p className="mt-4 text-sm text-ink-300">
+        <ProgressBar value={stepsDone} max={steps.length} className="mt-5 h-2.5" label="Postęp odblokowania czatu" />
+        <p className="mt-4 text-sm text-ink-500">
           {creator.firstName} odpowiada osobom, które korzystają z materiałów. Wykonaj trzy kroki, a wyślesz swoją wiadomość.
         </p>
       </div>
 
-      <ol className="space-y-2.5">
+      <ol className="divide-y divide-line border-t border-line">
         {steps.map((step, i) => (
-          <li key={step.id} className={cn("rounded-2xl border bg-white p-4", step.done ? "border-volt-500/50" : "border-line")}>
+          <li key={step.id} className="px-5 py-4">
             <div className="flex items-center gap-3">
               <span
                 className={cn(
@@ -61,7 +62,7 @@ export default function UserChatUnlockPage() {
             </div>
 
             {!step.done && step.id !== "answers" && (
-              <Link to={step.to} className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-violet-700">
+              <Link to={step.to} className="mt-2 ml-11 inline-flex items-center gap-1.5 text-sm font-semibold text-violet-700">
                 {step.id === "videos" ? "Przejdź do wideo" : "Przejdź do narzędzi"} <ArrowRight className="size-4" />
               </Link>
             )}
