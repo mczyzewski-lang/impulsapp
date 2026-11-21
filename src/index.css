@@ -1,0 +1,71 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/bricolage-grotesque";
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque Variable", "Inter Variable", ui-sans-serif, sans-serif;
+
+  /* Baza: granat / grafit */
+  --color-ink-950: #060914;
+  --color-ink-900: #0b1020;
+  --color-ink-800: #121a33;
+  --color-ink-700: #1c2647;
+  --color-ink-600: #2c3962;
+  --color-ink-500: #4a5785;
+  --color-ink-400: #7d88ae;
+  --color-ink-300: #aab2cf;
+
+  /* Akcent energetyczny: limonka */
+  --color-volt-200: #e6fba3;
+  --color-volt-300: #d8f96f;
+  --color-volt-400: #c8f542;
+  --color-volt-500: #aede1b;
+  --color-volt-700: #567005;
+
+  /* Jasne tła */
+  --color-paper: #f5f6fa;
+  --color-line: #e4e7f0;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-paper font-sans text-ink-900 antialiased;
+    overscroll-behavior-y: none;
+  }
+  h1, h2, h3 {
+    @apply font-display tracking-tight;
+  }
+  button, a {
+    @apply outline-offset-2 focus-visible:outline-2 focus-visible:outline-violet-500;
+  }
+  button {
+    cursor: pointer;
+  }
+}
+
+/* Safe areas (notch / home indicator) — istotne w Capacitorze */
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.04) 1px, transparent 1px);
+  background-size: 44px 44px;
+}

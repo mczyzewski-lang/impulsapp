@@ -1,0 +1,7 @@
+node_modules
+dist
+*.tsbuildinfo
+.DS_Store
+# Capacitor native projects are generated locally (npx cap add ios / android)
+ios
+android
