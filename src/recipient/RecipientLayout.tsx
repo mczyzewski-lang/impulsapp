@@ -232,8 +232,9 @@ export default function RecipientLayout() {
         {/* Nagłówek ma wszędzie ten sam układ; na wideo traci tło i leży na materiale, żeby obraz zajął cały ekran */}
         <header
           className={cn(
-            "pt-safe z-20 shrink-0 border-b",
-            immersive ? "absolute inset-x-0 top-0 border-transparent bg-linear-to-b from-black/75 via-black/35 to-transparent" : "border-line bg-paper",
+            "pt-safe z-20 shrink-0",
+            // Na wideo nagłówek nie ma tła ani linii — czytelność dają przyciemnione, rozmyte „pigułki” pod elementami.
+            immersive ? "absolute inset-x-0 top-0" : "border-b border-line bg-paper",
           )}
         >
           <div className="flex items-center gap-1 px-3 py-2.5">
@@ -243,7 +244,7 @@ export default function RecipientLayout() {
               aria-expanded={switcherOpen}
               aria-label={`Kanał: ${creator.channelName}. Zmień kanał`}
               onClick={() => setSwitcherOpen(true)}
-              className="flex min-w-0 flex-1 items-center gap-3 rounded-2xl p-1 pr-2 text-left hover:bg-ink-900/5"
+              className={cn("flex min-w-0 items-center gap-3 rounded-full p-1 pr-3.5 text-left", immersive ? "bg-black/45 backdrop-blur-md" : "flex-1 hover:bg-ink-900/5")}
             >
               <Avatar name={creator.name} />
               <span className="min-w-0">
@@ -251,13 +252,13 @@ export default function RecipientLayout() {
                   <span className="truncate">{creator.channelName}</span>
                   <ChevronDown className="size-4 shrink-0 opacity-60" strokeWidth={2.5} />
                 </span>
-                <span className="block truncate text-xs text-ink-400">Prywatny kanał · {creator.name}</span>
+                <span className={cn("block truncate text-xs", immersive ? "text-white/75" : "text-ink-400")}>Prywatny kanał · {creator.name}</span>
               </span>
             </button>
             <Link
               to="/app/powiadomienia"
               aria-label="Powiadomienia"
-              className="relative inline-flex size-10 shrink-0 items-center justify-center rounded-full text-ink-600 hover:bg-ink-900/5"
+              className={cn("relative inline-flex size-10 shrink-0 items-center justify-center rounded-full", immersive ? "ml-auto bg-black/45 text-white backdrop-blur-md" : "text-ink-600 hover:bg-ink-900/5")}
             >
               <Bell className="size-5" />
               {!notificationsRead && <span className="absolute top-2 right-2 size-2.5 rounded-full bg-violet-500 ring-2 ring-paper" />}

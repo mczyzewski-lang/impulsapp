@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Check, CheckSquare, ChevronDown, ChevronsUp, LayoutList, ListChecks, Play, RectangleVertical, RotateCcw } from "lucide-react";
+import { Check, CheckSquare, ChevronsUp, LayoutList, ListChecks, Play, RectangleVertical, RotateCcw } from "lucide-react";
 import { orderVideos, type Tool, type Video } from "@/data/mock";
 import { useProgress } from "@/state/progress";
 import { cn } from "@/lib/cn";
@@ -44,12 +44,10 @@ interface ReelProps {
   position: string;
   active: boolean;
   watched: boolean;
-  isLast: boolean;
   showSwipeHint: boolean;
   onComplete: () => void;
   onOpenTool: () => void;
   onOpenNotes: () => void;
-  onNext: () => void;
 }
 
 /**
@@ -57,7 +55,7 @@ interface ReelProps {
  * pionowe wypełnia ekran, pozostałe są wyśrodkowane na rozmytym tle.
  * Materiały bez pliku wideo mają odtwarzanie symulowane.
  */
-function Reel({ video, tool, position, active, watched, isLast, showSwipeHint, onComplete, onOpenTool, onOpenNotes, onNext }: ReelProps) {
+function Reel({ video, tool, position, active, watched, showSwipeHint, onComplete, onOpenTool, onOpenNotes }: ReelProps) {
   const [progress, setProgress] = useState(0);
   const [paused, setPaused] = useState(false);
   const finished = progress >= 100;
@@ -169,7 +167,7 @@ function Reel({ video, tool, position, active, watched, isLast, showSwipeHint, o
       <button type="button" onClick={toggle} aria-label={finished ? "Odtwórz ponownie" : playing ? "Wstrzymaj" : "Odtwórz"} className="absolute inset-0" />
 
       {/* Po obejrzeniu na dole pojawia się przycisk narzędzia — pasek akcji przesuwa się nad niego */}
-      <div className={cn("absolute right-3 z-10 flex flex-col items-center gap-4 transition-[bottom] duration-200", finished && tool ? "bottom-48" : "bottom-28")}>
+      <div className={cn("absolute right-3 z-10 flex flex-col items-center gap-4 transition-[bottom] duration-200", finished && tool ? "bottom-52" : "bottom-32")}>
         <button type="button" onClick={onOpenNotes} className={railButton}>
           <span className={railIcon}>
             <ListChecks className="size-5.5" />
@@ -182,14 +180,6 @@ function Reel({ video, tool, position, active, watched, isLast, showSwipeHint, o
               <CheckSquare className="size-5.5" />
             </span>
             Narzędzie
-          </button>
-        )}
-        {!isLast && (
-          <button type="button" onClick={onNext} className={railButton}>
-            <span className={railIcon}>
-              <ChevronDown className="size-6" />
-            </span>
-            Dalej
           </button>
         )}
       </div>
@@ -357,12 +347,10 @@ export default function UserVideosPage() {
               position={`${i + 1}/${videos.length}`}
               active={i === activeIndex && !notes}
               watched={watched.includes(video.id)}
-              isLast={i === videos.length - 1}
               showSwipeHint={i === 0 && !scrolled && videos.length > 1}
               onComplete={() => markWatched(video.id)}
               onOpenTool={() => tool && openTool(tool.id)}
               onOpenNotes={() => setNotes(video)}
-              onNext={() => scrollToIndex(i + 1, true)}
             />
           );
         })}
