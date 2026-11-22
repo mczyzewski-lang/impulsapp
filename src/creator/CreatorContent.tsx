@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Check, ChevronDown, ClipboardPaste, Mail, MessagesSquare, Mic, Sparkles, Trash2, Video, Volume2 } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowRight, Check, ChevronDown, ClipboardPaste, Mail, MessagesSquare, Mic, Sparkles, Trash2, Video, Volume2 } from "lucide-react";
 import { creator } from "@/data/mock";
 import { channelPath } from "@/config";
 import { addIdeas, buildPrompt, parseIdeas, removeIdea, sampleResponse, toScript, updateIdea, useIdeas, type Idea, type PromptOptions } from "@/state/ideas";
@@ -39,7 +39,7 @@ function IdeaCard({ idea }: { idea: Idea }) {
             )}
             {idea.emailQueued && (
               <Badge tone="violet">
-                <Mail className="size-3" /> Mail w kolejce
+                <Mail className="size-3" /> Mail w ciągu
               </Badge>
             )}
           </div>
@@ -103,7 +103,7 @@ function IdeaCard({ idea }: { idea: Idea }) {
           <div className="flex flex-wrap items-center gap-2">
             <Button variant={idea.emailQueued ? "outline" : "dark"} size="sm" onClick={() => updateIdea(idea.id, { emailQueued: !idea.emailQueued })}>
               {idea.emailQueued ? <Check className="size-4" /> : <Mail className="size-4" />}
-              {idea.emailQueued ? "W kolejce — kliknij, żeby zdjąć" : "Dodaj do kolejki newslettera"}
+              {idea.emailQueued ? "W ciągu — kliknij, żeby zdjąć" : "Dodaj do ciągu newslettera"}
             </Button>
             <CopyButton text={`${idea.emailSubject}\n\n${idea.emailBody}`} label="Kopiuj mail" />
           </div>
@@ -229,7 +229,11 @@ export default function CreatorContent() {
       {/* ── Baza ── */}
       <div className="mt-9 mb-3 flex flex-wrap items-end justify-between gap-2">
         <h2 className="text-lg font-bold">Twoje myśli {ideas.length > 0 && <span className="text-ink-400">{ideas.length}</span>}</h2>
-        {queued > 0 && <p className="text-sm text-ink-500">Maili w kolejce newslettera: <span className="font-semibold text-ink-900">{queued}</span></p>}
+        {queued > 0 && (
+          <Link to="/studio/newsletter" className="inline-flex items-center gap-1.5 text-sm font-semibold text-violet-700">
+            Maili w ciągu newslettera: {queued} — zobacz ciąg <ArrowRight className="size-4" />
+          </Link>
+        )}
       </div>
       {ideas.length === 0 ? (
         <Card className="p-8 text-center">

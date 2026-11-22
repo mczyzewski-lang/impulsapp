@@ -141,7 +141,7 @@ Impuls jako jedna pętla dla twórcy, który rośnie organicznie:
 | 3. Montaż | Napisy, plansze w stylu marki, przycięcie | jest (podgląd; bez eksportu pliku) |
 | 4. Dystrybucja | Publikuje w social mediach i w kanale, z planowaniem | jest (social przez Upload-Post) |
 | 5. Przechwycenie | Link w bio → strona zapisu → newsletter | jest strona zapisu i formularz do osadzenia |
-| 6. Newsletter | Maile z tej samej myśli co wideo | szkice i kolejka są; wysyłki jeszcze nie ma |
+| 6. Newsletter | Ciąg maili od dnia zapisu, z tych samych myśli co wideo | ciąg i jego ustawienia są; wysyłki jeszcze nie ma |
 | 7. Awans | Po zapisie zaproszenie do kanału w Impulsie | jest |
 | 8. Relacja | Impulsy, narzędzia, czat odblokowany aktywnością, scoring | jest |
 

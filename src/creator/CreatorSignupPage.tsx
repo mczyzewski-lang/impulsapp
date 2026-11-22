@@ -236,7 +236,8 @@ export default function CreatorSignupPage() {
               ))}
             </ol>
             <p className="mt-4 border-t border-line pt-4 text-xs text-ink-400">
-              Masz już listę w innym narzędziu? Nic nie zmieniasz — wklejasz tam linki z zakładki „Linki i kampanie”.
+              Kolejne maile — z Twoich treści — układasz w zakładce „Newsletter”. Masz już listę w innym narzędziu? Nic nie
+              zmieniasz — wklejasz tam linki z zakładki „Linki i kampanie”.
             </p>
           </Card>
         </div>

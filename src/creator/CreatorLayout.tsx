@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import {
-  BarChart3, CalendarClock, ExternalLink, FolderOpen, LayoutDashboard, Lightbulb, Link2, Menu, MessagesSquare, PanelTop, Plus, Radio, Settings, Trophy, Users, Video, X,
+  BarChart3, CalendarClock, ExternalLink, FolderOpen, LayoutDashboard, Lightbulb, Mail, Link2, Menu, MessagesSquare, PanelTop, Plus, Radio, Settings, Trophy, Users, Video, X,
 } from "lucide-react";
 import { creator } from "@/data/mock";
 import { cn } from "@/lib/cn";
@@ -21,6 +21,7 @@ const nav = [
   { to: "/studio/interakcje", label: "Czat i interakcje", icon: MessagesSquare, badge: 3 },
   { to: "/studio/analityka", label: "Analityka", icon: BarChart3 },
   { to: "/studio/strona", label: "Strona zapisu", icon: PanelTop },
+  { to: "/studio/newsletter", label: "Newsletter", icon: Mail },
   { to: "/studio/linki", label: "Linki i kampanie", icon: Link2 },
   { to: "/studio/ustawienia", label: "Ustawienia", icon: Settings },
 ];

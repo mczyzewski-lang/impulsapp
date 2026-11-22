@@ -36,6 +36,8 @@ const AdminPage = lazy(() => import("./admin/AdminPage"));
 const CreatorPublish = lazy(() => import("./creator/publish/CreatorPublish"));
 const CreatorCalendar = lazy(() => import("./creator/publish/CreatorCalendar"));
 const CreatorContent = lazy(() => import("./creator/CreatorContent"));
+const RecorderCamera = lazy(() => import("./creator/studio/RecorderCamera"));
+const CreatorNewsletter = lazy(() => import("./creator/CreatorNewsletter"));
 const CreatorLinks = lazy(() => import("./creator/CreatorLinks"));
 const CreatorSettings = lazy(() => import("./creator/CreatorSettings"));
 
@@ -72,6 +74,8 @@ export default function App() {
 
         <Route path="/tworcy" element={<CreatorsLanding />} />
         <Route path="/admin" element={<AdminPage />} />
+        {/* Kamera działa poza układem panelu — zajmuje cały ekran telefonu */}
+        <Route path="/nagrywanie" element={<RecorderCamera />} />
         <Route path="/s/:slug" element={<PublicSignupPage />} />
         <Route path="/e/:slug" element={<EmbedSignupPage />} />
         <Route path="/k/:slug/*" element={<CreatorInvitePage />} />
@@ -94,6 +98,7 @@ export default function App() {
           <Route path="impuls" element={<CreatorCreateImpulse />} />
           <Route path="materialy" element={<CreatorMaterials />} />
           <Route path="tresci" element={<CreatorContent />} />
+          <Route path="newsletter" element={<CreatorNewsletter />} />
           <Route path="nagraj" element={<CreatorRecorder />} />
           <Route path="montaz/:id" element={<CreatorVideoStudio />} />
           <Route path="publikacja/:id" element={<CreatorPublish />} />

@@ -216,3 +216,16 @@ export function useIdeas() {
 export const addIdeas = (items: Idea[]) => commit([...items, ...ideas]);
 export const updateIdea = (id: string, patch: Partial<Idea>) => commit(ideas.map((i) => (i.id === id ? { ...i, ...patch } : i)));
 export const removeIdea = (id: string) => commit(ideas.filter((i) => i.id !== id));
+
+/** Przesuwa mail o jedno miejsce w kolejce newslettera (kolejność = kolejność wysyłki). */
+export function moveQueued(id: string, direction: -1 | 1) {
+  const queued = ideas.filter((i) => i.emailQueued);
+  const from = queued.findIndex((i) => i.id === id);
+  const to = from + direction;
+  if (from < 0 || to < 0 || to >= queued.length) return;
+  [queued[from], queued[to]] = [queued[to], queued[from]];
+  // Niezakolejkowane myśli zostają na swoich miejscach; podmieniamy tylko pozycje zakolejkowanych.
+  let next = 0;
+  commit(ideas.map((i) => (i.emailQueued ? queued[next++] : i)));
+}
+

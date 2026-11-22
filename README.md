@@ -40,7 +40,9 @@ npm run build
 | `/studio/impuls` | `CreatorCreateImpulse` |
 | `/studio/materialy` | `CreatorMaterials` |
 | `/studio/tresci` | `CreatorContent` — prompt do czatu AI, wklejenie odpowiedzi, baza myśli ze scenariuszami i szkicami maili |
-| `/studio/nagraj` | `CreatorRecorder` — nagrywanie z kamery z prompterem (hook + treść / pytanie + treść) |
+| `/studio/newsletter` | `CreatorNewsletter` — ciąg maili od dnia zapisu: powitanie, przypomnienie i maile z kolejki „Treści” |
+| `/studio/nagraj` | `CreatorRecorder` — przygotowanie nagrania: scenariusz, kadr, ustawienia promptera |
+| `/nagrywanie` | `RecorderCamera` — kamera z prompterem na pełnym ekranie telefonu, poza układem panelu |
 | `/studio/montaz/:id` | `CreatorVideoStudio` — studio wideo: przycinanie, napisy, infografiki w stylu marki |
 | `/studio/publikacja/:id` | `CreatorPublish` — gdzie i kiedy opublikować zmontowane wideo (kanał Impulsu, social media) |
 | `/studio/kalendarz` | `CreatorCalendar` — plan publikacji i podpięte konta social |
