@@ -200,3 +200,28 @@ Dlaczego tak: zero kosztu AI po stronie Impulsu, treść jest w języku twórcy 
 
 Możliwe rozszerzenia: import pliku eksportu rozmów, dopracowanie myśli jednym kliknięciem przez OpenAI (klucz jest już
 w panelu administratora), kolejka maili spięta z prawdziwą wysyłką i z terminem publikacji wideo.
+
+## 9. Model: voucher na start i opłata za rolkę
+
+Pomysł: nowy twórca dostaje voucher (250 albo 500 zł), w onboardingu faktycznie nagrywa i publikuje pierwszą rolkę,
+a potem płaci za użycie — nagranie i montaż jednej rolki poniżej 50 zł netto.
+
+Co przemawia za:
+
+- **Płaci się za efekt, nie za dostęp.** „Gotowa, opublikowana rolka” jest zrozumiała i porównywalna z montażystą
+  (zwykle 100–300 zł za rolkę), więc 30–50 zł ma punkt odniesienia.
+- **Voucher wymusza aktywację.** 500 zł to około 10 rolek, czyli 2–3 tygodnie regularnego publikowania — tyle, ile trzeba,
+  żeby zobaczyć pierwsze zapisy ze strony w bio.
+- **Zgadza się z resztą modelu:** publikacja, strona zapisu, newsletter i kanał zostają bez opłat, bo to one przyprowadzają
+  odbiorców.
+
+Na co uważać:
+
+- **Koszt własny rolki jest niski** (napisy, dwie plansze, lektor: rząd kilku złotych), więc marża jest duża — ale cena
+  broni się tylko jakością montażu. Dziś studio nie eksportuje gotowego pliku; bez renderu nie ma czego wyceniać.
+- **Naliczać przy publikacji albo eksporcie, nie przy nagraniu.** Próby i odrzucone ujęcia nie powinny zjadać salda.
+- **Voucher w rolkach bywa czytelniejszy niż w złotych** („10 rolek na start”), ale kwota wygląda hojniej — warto sprawdzić oba.
+- **Termin ważności** (np. 30 dni) i wypłata w transzach po kamieniach milowych (pierwsza publikacja, pierwszy zapis)
+  ograniczają koszt vouchera u osób, które nie wystartują.
+- **Stały koszt na twórcę** (profil u dostawcy social, wysyłka maili) trzeba pokryć także u tych, którzy przestaną
+  kupować rolki — np. zawieszając podpięte konta po okresie bez aktywności.
