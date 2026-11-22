@@ -229,8 +229,13 @@ export default function RecipientLayout() {
   return (
     <AppUiContext.Provider value={ui}>
       <PhoneFrame dark>
-        {/* Nagłówek i nawigacja wyglądają identycznie na każdej zakładce */}
-        <header className="pt-safe z-20 shrink-0 border-b border-line bg-paper">
+        {/* Nagłówek ma wszędzie ten sam układ; na wideo traci tło i leży na materiale, żeby obraz zajął cały ekran */}
+        <header
+          className={cn(
+            "pt-safe z-20 shrink-0 border-b",
+            immersive ? "absolute inset-x-0 top-0 border-transparent bg-linear-to-b from-black/75 via-black/35 to-transparent" : "border-line bg-paper",
+          )}
+        >
           <div className="flex items-center gap-1 px-3 py-2.5">
             <button
               type="button"

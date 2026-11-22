@@ -79,6 +79,7 @@
  * Zamiast przepisywać klasy na każdym ekranie, w obrębie .theme-dark podmieniamy wartości tokenów:
  * tła stają się ciemne, tekst jasny, a pastelowe plakietki — półprzezroczyste.
  * .theme-base przywraca wartości wyjściowe tam, gdzie treść leży na wideo lub kolorowym tle.
+ * Uwaga: każdy token nadpisany w .theme-dark musi mieć swój odpowiednik w .theme-base.
  */
 :root {
   --base-white: var(--color-white);
@@ -95,6 +96,19 @@
   --base-violet-700: var(--color-violet-700);
   --base-volt-200: var(--color-volt-200);
   --base-volt-700: var(--color-volt-700);
+  --base-violet-50: var(--color-violet-50);
+  --base-violet-100: var(--color-violet-100);
+  --base-violet-200: var(--color-violet-200);
+  --base-violet-300: var(--color-violet-300);
+  --base-sky-100: var(--color-sky-100);
+  --base-sky-700: var(--color-sky-700);
+  --base-amber-100: var(--color-amber-100);
+  --base-amber-800: var(--color-amber-800);
+  --base-emerald-100: var(--color-emerald-100);
+  --base-emerald-700: var(--color-emerald-700);
+  --base-rose-100: var(--color-rose-100);
+  --base-rose-600: var(--color-rose-600);
+  --base-rose-700: var(--color-rose-700);
 }
 
 .theme-dark {
@@ -146,6 +160,19 @@
   --color-violet-700: var(--base-violet-700);
   --color-volt-200: var(--base-volt-200);
   --color-volt-700: var(--base-volt-700);
+  --color-violet-50: var(--base-violet-50);
+  --color-violet-100: var(--base-violet-100);
+  --color-violet-200: var(--base-violet-200);
+  --color-violet-300: var(--base-violet-300);
+  --color-sky-100: var(--base-sky-100);
+  --color-sky-700: var(--base-sky-700);
+  --color-amber-100: var(--base-amber-100);
+  --color-amber-800: var(--base-amber-800);
+  --color-emerald-100: var(--base-emerald-100);
+  --color-emerald-700: var(--base-emerald-700);
+  --color-rose-100: var(--base-rose-100);
+  --color-rose-600: var(--base-rose-600);
+  --color-rose-700: var(--base-rose-700);
 }
 
 /* Odstęp od góry ekranu powiększony o notch (pt-safe i pt-* ustawiają tę samą właściwość, więc nie da się ich łączyć). */

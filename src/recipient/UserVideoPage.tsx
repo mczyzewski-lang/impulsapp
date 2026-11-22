@@ -5,7 +5,6 @@ import { orderVideos, type Tool, type Video } from "@/data/mock";
 import { useProgress } from "@/state/progress";
 import { cn } from "@/lib/cn";
 import { formatAspect } from "@/lib/videoFormat";
-import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { useAppUi, type VideoView } from "./RecipientLayout";
 import { Sheet } from "./Sheet";
@@ -42,7 +41,6 @@ function ViewToggle({ view, onChange, tone }: { view: VideoView; onChange: (v: V
 interface ReelProps {
   video: Video;
   tool?: Tool;
-  creatorName: string;
   position: string;
   active: boolean;
   watched: boolean;
@@ -59,7 +57,7 @@ interface ReelProps {
  * pionowe wypełnia ekran, pozostałe są wyśrodkowane na rozmytym tle.
  * Materiały bez pliku wideo mają odtwarzanie symulowane.
  */
-function Reel({ video, tool, creatorName, position, active, watched, isLast, showSwipeHint, onComplete, onOpenTool, onOpenNotes, onNext }: ReelProps) {
+function Reel({ video, tool, position, active, watched, isLast, showSwipeHint, onComplete, onOpenTool, onOpenNotes, onNext }: ReelProps) {
   const [progress, setProgress] = useState(0);
   const [paused, setPaused] = useState(false);
   const finished = progress >= 100;
@@ -74,6 +72,8 @@ function Reel({ video, tool, creatorName, position, active, watched, isLast, sho
   useEffect(() => {
     const el = media.current;
     if (el) {
+      // iOS pozwala na automatyczny start tylko wyciszonego wideo — ustawiamy to wprost na elemencie.
+      el.muted = true;
       if (playing) void el.play().catch(() => setPaused(true));
       else el.pause();
       return;
@@ -96,12 +96,19 @@ function Reel({ video, tool, creatorName, position, active, watched, isLast, sho
   }, [active]);
 
   function toggle() {
+    const el = media.current;
     if (finished) {
-      if (media.current) media.current.currentTime = 0;
+      if (el) el.currentTime = 0;
       setProgress(0);
       setPaused(false);
+      // Start wywołany wprost z dotknięcia — przeglądarki mobilne traktują go jako działanie użytkownika.
+      void el?.play().catch(() => setPaused(true));
+    } else if (paused) {
+      setPaused(false);
+      void el?.play().catch(() => setPaused(true));
     } else {
-      setPaused((p) => !p);
+      setPaused(true);
+      el?.pause();
     }
   }
 
@@ -191,7 +198,6 @@ function Reel({ video, tool, creatorName, position, active, watched, isLast, sho
         <div className="pr-16">
           <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
             <span className="rounded-full bg-white/20 px-2.5 py-1 backdrop-blur">{video.tag}</span>
-            <span className="text-white/70">{video.date} · {video.duration}</span>
             {watched && (
               <span className="inline-flex items-center gap-1 rounded-full bg-volt-400 px-2.5 py-1 text-ink-950">
                 <Check className="size-3.5" strokeWidth={3} /> Obejrzane
@@ -200,9 +206,6 @@ function Reel({ video, tool, creatorName, position, active, watched, isLast, sho
           </div>
           <h2 className="mt-2.5 text-[1.4rem] leading-tight font-bold text-balance">{video.title}</h2>
           <p className="mt-1.5 line-clamp-2 text-sm text-white/80">{video.description}</p>
-          <p className="mt-3 flex items-center gap-2 text-xs font-semibold text-white/80">
-            <Avatar name={creatorName} size="sm" className="size-6 text-[10px]" /> {creatorName}
-          </p>
         </div>
 
         {finished && tool && (
@@ -226,7 +229,7 @@ function Reel({ video, tool, creatorName, position, active, watched, isLast, sho
       </div>
 
       {showSwipeHint && !finished && (
-        <p className="pointer-events-none absolute inset-x-0 top-20 flex animate-bounce flex-col items-center text-xs font-semibold text-white/80">
+        <p className="pointer-events-none absolute inset-x-0 top-36 flex animate-bounce flex-col items-center text-xs font-semibold text-white/80">
           <ChevronsUp className="size-5" />
           Przesuń w górę, żeby zobaczyć kolejny
         </p>
@@ -270,9 +273,8 @@ function VideoList({ videos, watched, onPick, toggle }: { videos: Video[]; watch
                       <Check className="size-3.5" strokeWidth={3} /> Obejrzane
                     </span>
                   ) : (
-                    <>{v.date}</>
+                    <>{v.duration}</>
                   )}
-                  <span>· {v.duration}</span>
                 </span>
               </span>
             </button>
@@ -352,7 +354,6 @@ export default function UserVideosPage() {
               key={video.id}
               video={video}
               tool={tool}
-              creatorName={creator.name}
               position={`${i + 1}/${videos.length}`}
               active={i === activeIndex && !notes}
               watched={watched.includes(video.id)}
@@ -368,7 +369,7 @@ export default function UserVideosPage() {
       </div>
 
       {/* Przełącznik widoku w prawym górnym narożniku, pod nagłówkiem kanału */}
-      <div className="theme-base absolute top-3 right-3 z-20">
+      <div className="theme-base absolute top-[calc(env(safe-area-inset-top)+4.5rem)] right-3 z-20">
         <ViewToggle view="feed" onChange={changeView} tone="dark" />
       </div>
 

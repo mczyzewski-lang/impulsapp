@@ -60,7 +60,6 @@ export default function UserChannelHome() {
             <div className="absolute inset-x-0 bottom-0 p-4">
               <div className="flex items-center gap-2 text-xs font-semibold">
                 <span className="rounded-full bg-white/20 px-2.5 py-1 backdrop-blur">{latest.tag}</span>
-                <span className="text-white/70">{latest.date} · {latest.duration}</span>
                 {watched.includes(latest.id) && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-volt-400 px-2.5 py-1 text-ink-950">
                     <Check className="size-3.5" strokeWidth={3} /> Obejrzane
@@ -132,7 +131,7 @@ export default function UserChannelHome() {
                   </span>
                 )}
                 <div className="absolute inset-x-0 bottom-0 p-2.5">
-                  <p className="text-[10px] font-semibold text-white/70">{v.tag} · {v.duration}</p>
+                  <p className="text-[10px] font-semibold text-white/70">{v.tag}</p>
                   <p className="mt-0.5 line-clamp-3 text-[13px] leading-snug font-semibold">{v.title}</p>
                 </div>
               </ReelCover>

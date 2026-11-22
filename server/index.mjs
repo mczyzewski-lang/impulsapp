@@ -14,6 +14,7 @@
 
 import { createServer } from "node:http";
 import { randomBytes, timingSafeEqual, createHash } from "node:crypto";
+import { createReadStream } from "node:fs";
 import { appendFile, mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -435,17 +436,40 @@ async function adminApi(req, res, path) {
 
 /* ───────────── Pliki statyczne ───────────── */
 
-async function serveStatic(res, path) {
+async function serveStatic(req, res, path) {
   const safe = normalize(path).replace(/^(\.\.[/\\])+/, "");
   let file = join(DIST, safe);
+  let info;
   try {
-    if (!file.startsWith(DIST) || !(await stat(file)).isFile()) throw new Error("brak pliku");
+    info = await stat(file);
+    if (!file.startsWith(DIST) || !info.isFile()) throw new Error("brak pliku");
   } catch {
     file = join(DIST, "index.html"); // routing po stronie klienta
+    info = await stat(file);
   }
-  const type = TYPES[extname(file)] ?? "application/octet-stream";
-  res.writeHead(200, { "content-type": type, "cache-control": file.includes("/assets/") ? "public, max-age=31536000, immutable" : "no-cache" });
-  res.end(await readFile(file));
+  const headers = {
+    "content-type": TYPES[extname(file)] ?? "application/octet-stream",
+    "cache-control": file.includes("/assets/") ? "public, max-age=31536000, immutable" : "no-cache",
+    "accept-ranges": "bytes",
+  };
+
+  // Żądania fragmentów pliku: Safari na iOS nie odtworzy wideo, jeśli serwer ich nie obsługuje.
+  const range = /^bytes=(\d*)-(\d*)$/.exec(String(req.headers.range ?? ""));
+  if (range && (range[1] || range[2])) {
+    const size = info.size;
+    const start = range[1] ? Number(range[1]) : Math.max(0, size - Number(range[2]));
+    const end = range[1] && range[2] ? Math.min(Number(range[2]), size - 1) : size - 1;
+    if (start > end || start >= size) {
+      res.writeHead(416, { "content-range": `bytes */${size}` });
+      return res.end();
+    }
+    res.writeHead(206, { ...headers, "content-range": `bytes ${start}-${end}/${size}`, "content-length": end - start + 1 });
+    return createReadStream(file, { start, end }).pipe(res);
+  }
+
+  res.writeHead(200, { ...headers, "content-length": info.size });
+  if (req.method === "HEAD") return res.end();
+  createReadStream(file).pipe(res);
 }
 
 await loadSettings();
@@ -456,7 +480,7 @@ createServer(async (req, res) => {
   try {
     if (path.startsWith("/api/admin/")) await adminApi(req, res, path);
     else if (path.startsWith("/api/")) await aiApi(req, res, path);
-    else await serveStatic(res, path);
+    else await serveStatic(req, res, path);
   } catch (error) {
     console.error(error);
     // Najczęstsza przyczyna błędu w /api to brak połączenia z dostawcą (ElevenLabs, OpenAI).
